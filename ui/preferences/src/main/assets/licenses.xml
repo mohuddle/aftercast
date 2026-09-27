@@ -114,4 +114,16 @@
         website="https://github.com/kikoso/android-stackblur"
         license="Apache 2.0"
         licenseText="LICENSE_APACHE-2.0.txt" />
+    <library
+        name="sherpa-onnx 1.13.8"
+        author="k2-fsa"
+        website="https://github.com/k2-fsa/sherpa-onnx/releases/tag/v1.13.8"
+        license="Apache 2.0"
+        licenseText="LICENSE_APACHE-2.0.txt" />
+    <library
+        name="Whisper small English"
+        author="OpenAI"
+        website="https://github.com/openai/whisper"
+        license="MIT"
+        licenseText="LICENSE_WHISPER.txt" />
 </libraries>

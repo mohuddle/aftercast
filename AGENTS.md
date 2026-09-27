@@ -1,6 +1,10 @@
 # General Instructions
 The following instructions are vital, always follow them.
-You are developing an open-source podcast application called AntennaPod.
+You are developing Aftercast, a GPL-3.0 Android podcast app derived from AntennaPod 3.12.2.
+The application id is `app.aftercast` (debug: `app.aftercast.debug`). The Java namespace is still `de.danoeh.antennapod`.
+This repository is https://github.com/mohuddle/aftercast. Do not open issues or pull requests against https://github.com/AntennaPod/AntennaPod.
+Do not present Aftercast as AntennaPod, and do not publish it with AntennaPod's Play Console credentials.
+Push to the `aftercast` remote. `origin` is the AntennaPod upstream and must not be pushed.
 STRICTLY FOLLOW THE INSTRUCTIONS IN THIS FILE! NEVER DEVIATE FROM THEM.
 If this helps you, consider repeating the relevant instructions before you do anything.
 Always prefer tool use over shell commands. This is very important to avoid unnecessary user confirmations.
@@ -77,15 +81,16 @@ ONLY USE THE EXACT COMMANDS GIVEN IN THIS FILE!
 Only then run the application or the tests to verify it.
 Usually you will need to run the application, but if there are existing tests that cover the code you wrote, you can run those instead.
 For installing and running the application, use the command
-`./gradlew --console=plain :app:installPlayDebug && adb shell monkey -p de.danoeh.antennapod.debug 1`.
+`./gradlew --console=plain :app:installPlayDebug && adb shell monkey -p app.aftercast.debug 1`.
 Then confirm with the user that the application is running correctly.
-If there is a crash, read the logs using `adb logcat -d | grep "de.danoeh.antennapod" | tail -20` and fix the issue.
+If there is a crash, read the logs using `adb logcat -d | grep "app.aftercast" | tail -20` and fix the issue.
 For running tests, use the command `./gradlew --console=plain` and use the task `:test` of the relevant module.
 As a final style check before opening a PR (or if a user explicitly asks for it), check the code style using:
 `./gradlew checkstyle lint`.
 If any command does not give any output, it is likely that it failed, so abort.
 
 # PR Conventions
+Pull requests go to mohuddle/aftercast, based on `main`. Never open one against AntennaPod/AntennaPod.
 When creating a PR, always read the PR template at `.github/pull_request_template.md` before starting and strictly follow it.
 The description goes above the checklist.
 Always mention the corresponding issue using `Closes: #<number>` in the description.

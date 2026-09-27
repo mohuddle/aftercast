@@ -143,13 +143,15 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
 }
 
-if (project.hasProperty("antennaPodPlayPublisherCredentials")) {
+// Aftercast is not on AntennaPod's Play track. This runs only when
+// aftercastPlayPublisherCredentials is set for Aftercast's own Play Console app.
+if (project.hasProperty("aftercastPlayPublisherCredentials")) {
     apply plugin: 'com.github.triplet.play'
     play {
         track.set('beta')
         //noinspection UnnecessaryQualifiedReference
         releaseStatus.set(com.github.triplet.gradle.androidpublisher.ReleaseStatus.IN_PROGRESS)
         userFraction.set(0.01d)
-        serviceAccountCredentials.set(file(antennaPodPlayPublisherCredentials))
+        serviceAccountCredentials.set(file(aftercastPlayPublisherCredentials))
     }
 }

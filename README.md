@@ -2,57 +2,32 @@
 
 Download once. Read it later.
 
-Aftercast is a podcast player for Android. This tree is a modified version of [AntennaPod](https://github.com/AntennaPod/AntennaPod) 3.12.2, licensed under GPL-3.0. AntennaPod is a separate project. The name, application id (`app.aftercast`), and launcher icon are Aftercast's. Do not present this app as AntennaPod.
+Aftercast is a podcast player for Android. It plays shows you have already downloaded, and it can transcribe a downloaded episode on the phone when you ask it to.
 
-The first builds are sideloaded release APKs. Transcription of a downloaded episode is on the device, and only when you choose Transcribe.
+This project is derived from [AntennaPod](https://github.com/AntennaPod/AntennaPod) 3.12.2 and is licensed under GPL-3.0. AntennaPod is a separate project. The name, application id (`app.aftercast`), and launcher icon are Aftercast's. Do not present this app as AntennaPod.
 
-The install file does not contain the speech model. The first transcription downloads Whisper small English (int8), about 375 MB, from the model host and keeps it on the phone. Later episodes reuse that download. A 50-minute episode can take longer than the episode itself, especially on a phone several years old. Phones from about the last five years are the intended fit. Audio is not uploaded.
+## Transcription
 
-The sherpa-onnx Android library used to run that model is vendored at `app/libs/sherpa-onnx-1.13.8.aar`. Upstream's gitignore skips `libs/`, so that file is added on purpose. The Whisper weights themselves are not in this repository. Release signing stays on the machine that builds the APK (`local.properties` and the keystore are not committed).
+Transcription runs only when you choose Transcribe on a downloaded episode. A publisher-supplied transcript is preferred, and that action stays hidden when one is already available. Audio stays on the phone.
 
-The Play Store description for this lives in `store-metadata/listings/en-US/`. This repository still tracks AntennaPod upstream and has not been published as Aftercast.
+The install file does not contain the speech model. The first transcription downloads Whisper small English (int8), about 375 MB, from [csukuangfj/sherpa-onnx-whisper-small.en](https://huggingface.co/csukuangfj/sherpa-onnx-whisper-small.en) and keeps it on the phone. Later episodes reuse that download. A 50-minute episode can take longer than the episode itself, especially on a phone several years old. Phones from about the last five years are the intended fit.
 
-# AntennaPod
+The recognizer is [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) 1.13.8, licensed under Apache-2.0. The Android library is vendored at `app/libs/sherpa-onnx-1.13.8.aar` (arm64-v8a only). Source for that version is tag [v1.13.8](https://github.com/k2-fsa/sherpa-onnx/releases/tag/v1.13.8). Upstream's gitignore skips `libs/`, so that file is added on purpose. The Whisper weights are not in this repository. Those weights are OpenAI's Whisper small.en model, converted for sherpa-onnx, and the original model is under the MIT license ([openai/whisper](https://github.com/openai/whisper)).
 
-[![GitHub check runs](https://img.shields.io/github/check-runs/AntennaPod/AntennaPod/develop)](https://github.com/AntennaPod/AntennaPod/actions/workflows/checks.yml?query=branch%3Adevelop)
-[![License: GPL v3](https://img.shields.io/github/license/AntennaPod/AntennaPod)](https://www.gnu.org/licenses/gpl-3.0)
-[![GitHub Release](https://img.shields.io/github/v/release/AntennaPod/AntennaPod)](https://github.com/AntennaPod/AntennaPod/releases)
-[![https://img.shields.io/github/commits-since/AntennaPod/AntennaPod/latest/develop](https://img.shields.io/github/commits-since/AntennaPod/AntennaPod/latest/develop)](https://github.com/AntennaPod/AntennaPod/commits/develop/)
-[![Translations on Weblate](https://hosted.weblate.org/widget/antennapod/app/svg-badge.svg?native=1)](https://hosted.weblate.org/engage/antennapod/)
-[![Good first issue](https://img.shields.io/github/issues-search?query=repo%3AAntennaPod%2FAntennaPod%20is%3Aopen%20is%3Aissue%20label%3A%22Good%20first%20issue%22&label=Good%20first%20issue&labelColor=grey&color=%235F1984)](https://github.com/AntennaPod/AntennaPod/labels/Good%20first%20issue)
+## Building
 
-This is the official repository of AntennaPod, the easy-to-use, flexible and open-source podcast manager for Android.
+```
+./gradlew :app:assembleFreeRelease
+```
 
-[<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
-      alt="Get it on Google Play"
-      height="70">](https://play.google.com/store/apps/details?id=de.danoeh.antennapod)
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-      alt="Get it on F-Droid"
-      height="70">](https://f-droid.org/app/de.danoeh.antennapod)
+The APK is `app/build/outputs/apk/free/release/app-free-release.apk`. Release signing stays on the machine that builds the APK. `local.properties` and the keystore are not in this repository.
 
-<img src="https://raw.githubusercontent.com/AntennaPod/StoreMetadata/main/listings/en-US/graphics/phone-screenshots/00.png" alt="Screenshot 0" height="200"> <img src="https://raw.githubusercontent.com/AntennaPod/StoreMetadata/main/listings/en-US/graphics/phone-screenshots/01.png" alt="Screenshot 1" height="200"> <img src="https://raw.githubusercontent.com/AntennaPod/StoreMetadata/main/listings/en-US/graphics/phone-screenshots/02.png" alt="Screenshot 2" height="200"> <img src="https://raw.githubusercontent.com/AntennaPod/StoreMetadata/main/listings/en-US/graphics/phone-screenshots/03.png" alt="Screenshot 3" height="200"> <img src="https://raw.githubusercontent.com/AntennaPod/StoreMetadata/main/listings/en-US/graphics/phone-screenshots/04.png" alt="Screenshot 4" height="200"> <img src="https://raw.githubusercontent.com/AntennaPod/StoreMetadata/main/listings/en-US/graphics/phone-screenshots/05.png" alt="Screenshot 5" height="200">
+Play Store copy lives in `store-metadata/listings/en-US/`. Aftercast has not been submitted to the Play Store. Do not publish it with AntennaPod's Play Console credentials.
 
+## Based on AntennaPod
 
-## Feedback
-You can use the [AntennaPod Forum](https://forum.antennapod.org/) for discussions about the app or just podcasting in general.
+AntennaPod upstream is https://github.com/AntennaPod/AntennaPod. The Java package namespace in this tree is still `de.danoeh.antennapod`. The installable application id is `app.aftercast`.
 
-Bug reports and feature requests can be submitted [here](https://github.com/AntennaPod/AntennaPod/issues) (please read the [instructions](https://github.com/AntennaPod/AntennaPod/blob/develop/CONTRIBUTING.md) on how to report a bug and how to submit a feature request first!).
+The GPL-3.0 license text is in [LICENSE](LICENSE).
 
-We also hold regular community calls to discuss anything AntennaPod-related. [Come join the next call](https://forum.antennapod.org/t/monthly-community-call/1869)!
-
-## Help to test AntennaPod
-AntennaPod has many users and we don't want them to run into trouble when we add a new feature. It's important that we have a significant group test our app, so that we know all possible combinations of phones, Android versions and use cases work as expected. Check out our wiki on how to join our [Beta testing program](https://antennapod.org/documentation/general/beta)! If a bug is reported during the beta period, chances are high that it will be fixed before the upcoming stable version. If it is reported later, fixing might take another full beta cycle. So definitely let us know if something is not right.
-
-## License
-
-AntennaPod is licensed under the GNU General Public License (GPL-3.0). You can find the license text in the [LICENSE](https://github.com/AntennaPod/AntennaPod/blob/develop/LICENSE) file.
-
-## Translating AntennaPod
-
-If you want to translate AntennaPod into another language, you can visit our [Weblate page](https://hosted.weblate.org/projects/antennapod/).
-
-
-## Building AntennaPod
-
-You can build AntennaPod just like any other Android project. Refer to the [instructions](https://github.com/AntennaPod/AntennaPod/blob/develop/CONTRIBUTING.md) for more details.
-
+Bug reports and pull requests for Aftercast belong in this repository. AntennaPod's forum, issue tracker, Play listing, F-Droid listing, and Weblate project are for AntennaPod, not for Aftercast.

@@ -1,85 +1,56 @@
 How to report a bug
 -------------------
-- Before anything else, please make sure you are on the latest version, the bug you are experiencing may have been fixed already!
-- Use the search function to see if someone else has already submitted the same bug report.
-- Try to describe the problem with as much detail as possible.
-- Some bugs may only occur on certain devices or versions of Android. Please add information about your device and the version of Android that is running on it (you can look these up under `Settings → About Phone`), as well as which version of AntennaPod you are using.
-- If the bug only seems to occur with a certain podcast, please include the URL of that podcast.
-- If possible, add instructions on how to reproduce the bug.
-- If possible, add a logfile to your post. This is especially useful if the bug makes the application crash. AntennaPod has an `export logs` feature for this.
-- Usually, you can take a screenshot of your smartphone by pressing *Power* + *Volume down* for a few seconds.
-- Please use the following **[template](https://github.com/AntennaPod/AntennaPod/issues/new?assignees=&labels=Type%3A+Possible+bug&template=bug_report.yml)**.
+- Before anything else, please make sure you are on the latest Aftercast build. The behavior you are seeing may already have changed.
+- Search [open issues](https://github.com/mohuddle/aftercast/issues) and [closed issues](https://github.com/mohuddle/aftercast/issues?q=is%3Aissue+is%3Aclosed) before opening a new one.
+- Describe the problem with as much detail as you can.
+- Include the device, the Android version (`Settings → About Phone`), and the Aftercast version from the in-app settings screen.
+- If the bug only happens with one podcast, include that podcast's URL.
+- Include steps to reproduce the bug when you can.
+- If the app crashes, attach a log. Aftercast can export logs from the bug-report screen.
+- Please use the [bug report template](https://github.com/mohuddle/aftercast/issues/new?template=bug_report.yml).
+
+This repository is Aftercast. AntennaPod's forum and issue tracker are for AntennaPod.
 
 
 How to submit a feature request
 -------------------------------
-- Make sure you are using the latest version of AntennaPod. Perhaps the feature you are looking for has already been implemented.
-- Use the search function to see if someone else has already submitted the same feature request. If there is another request already, please upvote the first post instead of commenting something like "I also want this".
-- To make it easier for us to keep track of requests, please only make one feature request per issue.
-- Give a brief explanation about the problem that may currently exist and how your requested feature solves this problem.
-- Try to be as specific as possible. Please not only explain what the feature does, but also how. If your request is about (or includes) changing or extending the UI, describe what the UI would look like and how the user would interact with it.
-- Please use the following **[template](https://github.com/AntennaPod/AntennaPod/issues/new?assignees=&labels=&template=feature_request.yml)**. 
+- Search existing issues first. If the same request is already open, comment there instead of opening a duplicate.
+- One feature per issue.
+- Explain the problem and how the feature solves it, including how the screen would behave if the request changes the UI.
+- Please use the [feature request template](https://github.com/mohuddle/aftercast/issues/new?template=feature_request.yml).
 
 
-Translating AntennaPod
-----------------------
-If you would like to translate the app into another language or improve an existing translation, you can visit the [Weblate project page](https://antennapod.org/contribute/translate). From there, you can either join a language team if it already exists or create a new language team.
+Translating
+-----------
+There is no separate translation project for Aftercast. Change English strings only, in `ui/i18n/src/main/res/values/strings.xml`. Files under `values-*/` still contain AntennaPod translations and are not edited here.
 
 
 Submit a pull request
 ---------------------
-- Before you work on the code
-  - Make sure that there is an issue *without* the `Needs: Triage` or `Needs: Decision` label for the feature you want to implement or bug you want to fix. If you just start working on a feature that is not approved yet (or not even has an issue), your PR might not get merged.
-  - Add a comment to the issue so that other people know that you are working on it.
-    - You don't need to ask for permission to work on something, just indicate that you are doing so.
-  - If you want to discuss the approach to take, feel free to ask in the issue or join a [community call](https://antennapod.org/events/community-meeting).
-- Fork the repository
-- Create a new branch for your contribution
-  - This makes opening possible additional pull requests easier.
-  - As a base, use the `develop` branch.
-    - Almost all changes of AntennaPod are done on the `develop` branch. If a new version of AntennaPod is released, the `develop` branch is merged into `master`. As a result, the `master` branch probably doesn't contain the latest changes when you are reading this. Otherwise, there might be a lot of merge-conflicts when merging your changes into `develop` and therefore it might take longer to review your pull-request.
-- Get coding :)
-  - If possible, add unit tests for your pull request and make sure that they pass.
-  - Please do not upgrade dependencies or build tools unless you have a good reason for it. Doing so can easily introduce bugs that are hard to track down.
-  - Please follow our code style. You can use Checkstyle within Android Studio using our [configuration file](https://github.com/AntennaPod/AntennaPod/blob/develop/config/checkstyle/checkstyle.xml).
-  - To check the code style locally, run `./gradlew checkstyle lint spotbugsPlayDebug spotbugsDebug`
-  - Please only change the English string resources. Translations are handled on [Weblate](https://antennapod.org/contribute/translate).
-- Open the PR
-  - Mention the corresponding issue in the pull request text, so that it can be closed once your pull request has been merged. If you use [special keywords](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue), GitHub will close the issue(s) automatically.
+- Open the pull request against this repository (`mohuddle/aftercast`), based on `main`. Do not open it against AntennaPod.
+- Comment on an existing issue when you start work, so two people do not write the same change.
+- Keep the change focused. Do not upgrade dependencies or build tools unless the issue calls for that.
+- Add unit tests when the change has a clear case to pin down.
+- Please only change English string resources.
+- Check style locally with `./gradlew checkstyle lint`.
+- The checkstyle rules live in [config/checkstyle/checkstyle.xml](config/checkstyle/checkstyle.xml).
+- Mention the related issue in the pull request text. [Special keywords](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue) such as `Closes: #123` will close it when the pull request merges.
 
 
-Building From Source
---------------------------
-1. Fork this repository
-1. Download Android Studio
-1. Download AntennaPod
-   1. Option A: Using the git command line (recommended)
-       1. Use `git clone <url>` with the remote url of your forked repo.
-          The AntennaPod repo contains a large submodule with app store metadata like screenshots.
-          You **do not need that** for normal development.
-       1. In Android Studio: File » New » Project from existing sources
-   1. Option B: From Android Studio
-       1. File » New » Project from version control
-       1. Enter the remote url of the forked repo
-1. Wait for a long time until all progress bars go away
-1. Press the Play button
+Building from source
+--------------------
+1. Fork this repository.
+2. Clone your fork. You do not need any git submodule for normal development.
+3. Open the folder in Android Studio and wait until Gradle finishes.
+4. Run the `freeDebug` or `playDebug` variant. The application id is `app.aftercast` (`app.aftercast.debug` for debug builds).
 
-Testing and Verifying
---------------------------
-As a developer contributing to AntennaPod, we ask that you test the feature yourself manually and better yet, add unit and functional tests to any feature of bug you fix.
+From the command line, a release APK is:
 
-### Running Unit Tests
+```
+./gradlew :app:assembleFreeRelease
+```
+
+### Unit tests
+
 * `./gradlew testPlayDebugUnitTest`       # all projects
-* `./gradlew :app:testPlayDebugUnitTest`  # specific project - list project names with `./gradlew projects`
-
-### Running Integration Tests
-
-#### Using Android Studio
-* Create a configuration via 'Run->Edit Configurations...'
-
-<img width="768" alt="antennapod-run-tests"
-src="https://user-images.githubusercontent.com/149837/105122859-e1317180-5a8b-11eb-8d45-d54a3b051a9b.png">
-
-#### Using the command line
-* Start an AVD or plug in your phone
-* `sh .github/workflows/runTests.sh`
+* `./gradlew :app:testPlayDebugUnitTest`  # the app module
