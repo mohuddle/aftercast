@@ -6,4 +6,8 @@ Transcription runs on your phone. The audio is not uploaded.
 
 The speech model is not part of the install. The first time you transcribe, Aftercast downloads Whisper small English, about 375 MB, and keeps it for later episodes. That is why the download is large even though the app itself is smaller. Plan on that extra space, and on a long episode taking a while. Phones from about the last five years are the intended fit. An older phone can still run it. It will just take longer and use more of the phone's memory while it works.
 
-Aftercast is a modified version of AntennaPod and is licensed under GPL-3.0. AntennaPod is a separate project. Source is offered with the app, as the GPL requires.
+Aftercast is a modified version of AntennaPod and is licensed under GPL-3.0. AntennaPod is a separate project. Source is offered with the app, as the GPL requires: https://github.com/mohuddle/aftercast
+
+Privacy policy: https://github.com/mohuddle/aftercast/blob/main/PRIVACY.md
+
+This build runs on 64-bit ARM phones.

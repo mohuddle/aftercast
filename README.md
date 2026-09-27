@@ -22,7 +22,7 @@ The recognizer is [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) 1.13.8, l
 
 The APK is `app/build/outputs/apk/free/release/app-free-release.apk`. Release signing stays on the machine that builds the APK. `local.properties` and the keystore are not in this repository.
 
-Play Store copy lives in `store-metadata/listings/en-US/`. Aftercast has not been submitted to the Play Store. Do not publish it with AntennaPod's Play Console credentials.
+Play Store copy lives in `store-metadata/listings/en-US/`. Aftercast has not been submitted to the Play Store. Do not publish it with AntennaPod's Play Console credentials. The privacy policy is [PRIVACY.md](PRIVACY.md).
 
 ## Based on AntennaPod
 

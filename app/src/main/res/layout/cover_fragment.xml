@@ -77,25 +77,24 @@
 
     <LinearLayout
         android:id="@+id/episode_details"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:baselineAligned="false"
+        android:gravity="top"
         android:orientation="horizontal"
-        android:layout_gravity="center_horizontal"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp">
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp">
 
         <LinearLayout
             android:id="@+id/openDescription"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
+            android:layout_marginHorizontal="4dp"
             android:paddingHorizontal="8dp"
             android:background="@drawable/grey_border"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:minWidth="150dp"
             android:layout_weight="1"
             android:orientation="horizontal">
 
@@ -123,16 +122,75 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/chapterButton"
-            android:layout_width="match_parent"
+            android:id="@+id/transcriptButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/openTranscript"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/grey_border"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="8dp">
+
+                <ImageView
+                    android:id="@+id/transcriptIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:contentDescription="@string/transcript"
+                    android:padding="2dp"
+                    app:srcCompat="@drawable/transcript" />
+
+                <TextView
+                    android:id="@+id/transcriptLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:ellipsize="end"
+                    android:gravity="center_horizontal"
+                    android:maxLines="1"
+                    android:text="@string/transcript"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/transcriptProgress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginTop="4dp"
+                android:indeterminate="false"
+                android:max="100"
+                android:maxHeight="4dp"
+                android:minHeight="4dp"
+                android:progress="0"
+                android:progressTint="?android:attr/textColorSecondary"
+                android:indeterminateTint="?android:attr/textColorSecondary"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/chapterButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="4dp"
             android:layout_weight="1"
             android:background="@drawable/grey_border"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:minWidth="150dp"
             android:orientation="horizontal"
             android:visibility="gone"
             tools:visibility="visible">

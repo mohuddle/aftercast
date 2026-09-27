@@ -311,6 +311,7 @@
     <string name="transcribe_ready">Transcript ready</string>
     <string name="transcribe_failed">Transcription failed</string>
     <string name="transcribe_cancelled">Transcription stopped</string>
+    <string name="transcribe_time_limit">Transcription stopped at the daily time limit. What was already written is saved, and you can resume it.</string>
     <string name="transcribe_busy">Already transcribing another episode</string>
     <string name="transcribe_need_download">Download the episode before transcribing it</string>
     <string name="transcribe_no_audio">This episode has no audio file</string>
@@ -639,7 +640,7 @@
 
     <!-- Report bug -->
     <string name="report_bug_title">Report bug</string>
-    <string name="report_bug_message">Sorry to hear something isn’t working. Aftercast is based on AntennaPod. Check the AntennaPod forum or GitHub to see if this player issue is already known.</string>
+    <string name="report_bug_message">Sorry to hear something isn’t working. Report it on the Aftercast GitHub. If it is a general player issue, it may already be known on the AntennaPod forum.</string>
     <string name="report_bug_device_info_title">Device</string>
     <string name="report_bug_attrib_app_version">App version</string>
     <string name="report_bug_attrib_android_version">Android version</string>
@@ -660,6 +661,7 @@
     <string name="translators">Translators</string>
     <string name="special_thanks">Special thanks</string>
     <string name="privacy_policy">Privacy policy</string>
+    <string name="privacy_policy_summary">How Aftercast handles downloads and transcription</string>
     <string name="licenses">Licenses</string>
     <string name="licenses_summary">Aftercast uses other great software</string>
 

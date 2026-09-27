@@ -51,7 +51,8 @@ public class AboutFragment extends AnimatedPreferenceFragment {
             return true;
         });
         findPreference("about_privacy_policy").setOnPreferenceClickListener((preference) -> {
-            IntentUtils.openInBrowser(getContext(), "https://antennapod.org/privacy/");
+            IntentUtils.openInBrowser(getContext(),
+                    "https://github.com/mohuddle/aftercast/blob/main/PRIVACY.md");
             return true;
         });
         findPreference("about_licenses").setOnPreferenceClickListener((preference) -> {

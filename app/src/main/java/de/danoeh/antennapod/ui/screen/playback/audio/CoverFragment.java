@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.BlendModeColorFilterCompat;
 import androidx.core.graphics.BlendModeCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.media3.session.MediaController;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
@@ -34,6 +35,9 @@ import de.danoeh.antennapod.BuildConfig;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.event.MessageEvent;
 import de.danoeh.antennapod.event.PlayerStatusEvent;
+import de.danoeh.antennapod.event.TranscribeEvent;
+import de.danoeh.antennapod.transcription.TranscribeService;
+import de.danoeh.antennapod.transcription.TranscriptionUi;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.playback.service.PlaybackService;
 import de.danoeh.antennapod.playback.service.PlaybackServiceStarter;
@@ -74,6 +78,10 @@ public class CoverFragment extends Fragment {
     private Disposable disposable;
     private int displayedChapterIndex = -1;
     private Playable media;
+    private volatile long transcribedMs;
+    private volatile long transcriptTotalMs;
+    private volatile boolean transcriptComplete;
+    private volatile boolean publisherTranscript;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -105,6 +113,9 @@ public class CoverFragment extends Fragment {
         viewBinding.butNextChapter.setColorFilter(colorFilter);
         viewBinding.butPrevChapter.setColorFilter(colorFilter);
         viewBinding.descriptionIcon.setColorFilter(colorFilter);
+        viewBinding.transcriptIcon.setColorFilter(colorFilter);
+        viewBinding.openTranscript.setOnClickListener(v -> openTranscript());
+        updateTranscriptButton();
         viewBinding.chapterButton.setOnClickListener(v ->
                 new ChaptersFragment().show(getChildFragmentManager(), ChaptersFragment.TAG));
         viewBinding.butPrevChapter.setOnClickListener(v -> seekToPrevChapter());
@@ -127,6 +138,7 @@ public class CoverFragment extends Fragment {
                 if (includingChapters) {
                     ChapterUtils.loadChapters(media, getContext(), false);
                 }
+                readTranscriptProgress(media);
                 emitter.onSuccess(media);
             } else {
                 emitter.onComplete();
@@ -188,6 +200,92 @@ public class CoverFragment extends Fragment {
         displayedChapterIndex = -1;
         refreshChapterData(Chapter.getAfterPosition(media.getChapters(), media.getPosition()));
         updateChapterControlVisibility();
+        updateTranscriptButton();
+    }
+
+    private void readTranscriptProgress(Playable playable) {
+        publisherTranscript = false;
+        transcriptComplete = false;
+        transcribedMs = 0L;
+        transcriptTotalMs = 0L;
+        if (!(playable instanceof FeedMedia)) {
+            return;
+        }
+        FeedMedia feedMedia = (FeedMedia) playable;
+        publisherTranscript = Boolean.TRUE.equals(feedMedia.hasTranscript());
+        transcriptTotalMs = Math.max(feedMedia.getDuration(), 0);
+        String localFile = feedMedia.getLocalFileUrl();
+        transcriptComplete = TranscribeService.isGeneratedComplete(localFile);
+        transcribedMs = transcriptComplete
+                ? transcriptTotalMs
+                : TranscribeService.transcribedMs(localFile);
+    }
+
+    private void openTranscript() {
+        if (!(media instanceof FeedMedia) || !viewBinding.openTranscript.isEnabled()) {
+            return;
+        }
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            return;
+        }
+        TranscriptionUi.show(activity, ((FeedMedia) media).getId());
+    }
+
+    private void updateTranscriptButton() {
+        if (viewBinding == null) {
+            return;
+        }
+        FeedMedia feedMedia = media instanceof FeedMedia ? (FeedMedia) media : null;
+        long duration = transcriptTotalMs;
+        if (feedMedia != null) {
+            duration = Math.max(duration, feedMedia.getDuration());
+        }
+        long audioDone = transcribedMs;
+        boolean showBar = false;
+        boolean indeterminate = false;
+        int barMax = 1;
+        int barProgress = 0;
+        String barDescription = null;
+
+        TranscribeEvent event = EventBus.getDefault().getStickyEvent(TranscribeEvent.class);
+        boolean live = feedMedia != null && event != null
+                && !event.isTerminal() && event.getMediaId() == feedMedia.getId();
+        if (live) {
+            showBar = true;
+            barDescription = event.getMessage();
+            if (event.getState() == TranscribeEvent.State.DOWNLOADING && event.getTotalMs() == 100) {
+                barMax = 100;
+                barProgress = (int) Math.min(100L, Math.max(0L, event.getDoneMs()));
+            } else if (event.getState() == TranscribeEvent.State.RUNNING) {
+                long total = event.getTotalMs() > 0 ? event.getTotalMs() : duration;
+                audioDone = event.getDoneMs();
+                if (total > 0) {
+                    duration = total;
+                }
+                barMax = (int) Math.min(Integer.MAX_VALUE, Math.max(1L, total));
+                barProgress = (int) Math.min(barMax, Math.max(0L, audioDone));
+            } else {
+                indeterminate = true;
+            }
+        } else if (!transcriptComplete && audioDone > 0 && duration > 0) {
+            showBar = true;
+            barMax = (int) Math.min(Integer.MAX_VALUE, Math.max(1L, duration));
+            barProgress = (int) Math.min(barMax, audioDone);
+        }
+
+        boolean openable = publisherTranscript || transcriptComplete
+                || (duration > 0 && audioDone * 2 >= duration);
+        viewBinding.openTranscript.setEnabled(openable);
+        viewBinding.openTranscript.setClickable(openable);
+        viewBinding.openTranscript.setAlpha(openable ? 1f : 0.38f);
+        viewBinding.transcriptProgress.setVisibility(showBar ? View.VISIBLE : View.GONE);
+        viewBinding.transcriptProgress.setIndeterminate(indeterminate);
+        if (!indeterminate) {
+            viewBinding.transcriptProgress.setMax(barMax);
+            viewBinding.transcriptProgress.setProgress(barProgress);
+        }
+        viewBinding.transcriptProgress.setContentDescription(barDescription);
     }
 
     private void openFeed(Feed feed) {
@@ -293,6 +391,24 @@ public class CoverFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPlayerStatusEvent(PlayerStatusEvent event) {
         loadMediaInfo(false);
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onTranscribeEvent(TranscribeEvent event) {
+        if (!(media instanceof FeedMedia) || event.getMediaId() != ((FeedMedia) media).getId()) {
+            return;
+        }
+        if (event.getTotalMs() > 0 && event.getState() != TranscribeEvent.State.DOWNLOADING) {
+            transcriptTotalMs = Math.max(transcriptTotalMs, event.getTotalMs());
+        }
+        if (event.getState() == TranscribeEvent.State.DONE) {
+            transcriptComplete = true;
+            transcribedMs = Math.max(transcribedMs, event.getTotalMs());
+        } else if (event.getState() == TranscribeEvent.State.RUNNING || event.isTerminal()) {
+            transcribedMs = event.getDoneMs();
+            transcriptComplete = false;
+        }
+        updateTranscriptButton();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

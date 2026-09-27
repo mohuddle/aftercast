@@ -91,6 +91,20 @@ public class TranscribeService extends android.app.Service {
         ContextCompat.startForegroundService(context, intent);
     }
 
+    /** Milliseconds of this downloaded episode already written to the on-device transcript. */
+    public static long transcribedMs(@Nullable String localFileUrl) {
+        String path = filesystemPath(localFileUrl);
+        if (path == null) {
+            return 0L;
+        }
+        return GeneratedTranscript.resumeMs(path);
+    }
+
+    public static boolean isGeneratedComplete(@Nullable String localFileUrl) {
+        String path = filesystemPath(localFileUrl);
+        return path != null && GeneratedTranscript.isComplete(path);
+    }
+
     public static boolean isActive(long mediaId) {
         if (mediaId <= 0 || mediaId != activeMediaId) {
             return false;
@@ -389,7 +403,10 @@ public class TranscribeService extends android.app.Service {
     private void enterForeground() {
         ongoing = true;
         Notification notification = buildNotification();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            startForeground(NOTIFICATION_ID, notification,
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROCESSING);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(NOTIFICATION_ID, notification,
                     ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
         } else {
@@ -481,6 +498,31 @@ public class TranscribeService extends android.app.Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @Override
+    public void onTimeout(int startId) {
+        stopForTimeLimit();
+    }
+
+    @Override
+    public void onTimeout(int startId, int fgsType) {
+        stopForTimeLimit();
+    }
+
+    private void stopForTimeLimit() {
+        cancelFlag.cancelled = true;
+        if (activeState != TranscribeEvent.State.CANCELLED
+                && activeState != TranscribeEvent.State.FAILED
+                && activeState != TranscribeEvent.State.DONE) {
+            String text = getString(R.string.transcribe_time_limit);
+            activeState = TranscribeEvent.State.CANCELLED;
+            message = text;
+            ongoing = false;
+            post(new TranscribeEvent(activeMediaId, TranscribeEvent.State.CANCELLED, doneMs, totalMs, text));
+            NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, buildNotification());
+        }
+        finish(false);
     }
 
     @Override

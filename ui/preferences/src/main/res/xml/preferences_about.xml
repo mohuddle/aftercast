@@ -17,7 +17,7 @@
     <Preference
             android:key="about_privacy_policy"
             android:icon="@drawable/ic_policy"
-            android:summary="www.antennapod.org/privacy"
+            android:summary="@string/privacy_policy_summary"
             android:title="@string/privacy_policy"/>
     <Preference
             android:key="about_licenses"
