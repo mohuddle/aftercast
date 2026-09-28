@@ -92,4 +92,14 @@
                 android:summary="@string/pref_skip_keeps_episodes_sum"
                 android:title="@string/pref_skip_keeps_episodes_title"/>
     </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/transcription_model_category">
+        <de.danoeh.antennapod.ui.preferences.preference.MaterialListPreference
+                android:defaultValue="small"
+                android:entries="@array/transcription_model_options"
+                android:entryValues="@array/transcription_model_values"
+                android:key="prefTranscriptionModel"
+                android:summary="@string/transcription_model_summary"
+                android:title="@string/transcription_model_title"/>
+    </PreferenceCategory>
 </PreferenceScreen>

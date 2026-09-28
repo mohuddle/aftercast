@@ -9,7 +9,7 @@
 
     <!-- Activity and fragment titles -->
     <string name="provider_authority" translatable="false">app.aftercast.provider</string>
-    <string name="tagline">Download once. Read it later.</string>
+    <string name="tagline">Download once. Read later.</string>
     <string name="fork_notice">Aftercast is a modified version of AntennaPod and is licensed under GPL-3.0. AntennaPod is a separate project.</string>
     <string name="feed_update_receiver_name">Update subscriptions</string>
     <string name="statistics_label">Statistics</string>
@@ -304,7 +304,13 @@
     <string name="transcribe_episode">Transcribe</string>
     <string name="resume_transcription">Resume transcription</string>
     <string name="cancel_transcription">Cancel transcription</string>
-    <string name="transcribe_downloading_model">Downloading the transcription model, about 375 MB…</string>
+    <string name="transcribe_downloading_model">Downloading the transcription model, about %1$d MB…</string>
+    <string name="transcription_model_category">Transcription</string>
+    <string name="transcription_model_title">Transcription model</string>
+    <string name="transcription_model_summary">Used the next time you transcribe. Faster is the better fit for an older phone. Larger is more accurate, needs about 900 MB, and can be too heavy to run while audio plays. A model already downloaded stays on the phone.</string>
+    <string name="transcription_model_base">Faster, about 160 MB</string>
+    <string name="transcription_model_small">Standard, about 375 MB</string>
+    <string name="transcription_model_medium">Larger, about 900 MB</string>
     <string name="transcribe_loading_model">Loading the transcription model…</string>
     <string name="transcribe_progress">Transcribing %1$s of %2$s</string>
     <string name="transcribe_waiting">The first passage will show up in a moment. You can keep listening.</string>

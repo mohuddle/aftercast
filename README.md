@@ -1,6 +1,6 @@
 # Aftercast
 
-Download once. Read it later.
+Download once. Read later.
 
 Aftercast is a podcast player for Android. It plays shows you have already downloaded, and it can transcribe a downloaded episode on the phone when you ask it to.
 
@@ -10,7 +10,7 @@ This project is derived from [AntennaPod](https://github.com/AntennaPod/AntennaP
 
 Transcription runs only when you choose Transcribe on a downloaded episode. A publisher-supplied transcript is preferred, and that action stays hidden when one is already available. Audio stays on the phone.
 
-The install file does not contain the speech model. The first transcription downloads Whisper small English (int8), about 375 MB, from [csukuangfj/sherpa-onnx-whisper-small.en](https://huggingface.co/csukuangfj/sherpa-onnx-whisper-small.en) and keeps it on the phone. Later episodes reuse that download. A 50-minute episode can take longer than the episode itself, especially on a phone several years old. Phones from about the last five years are the intended fit.
+The install file does not contain the speech model. The first transcription downloads the Whisper English model chosen in Playback settings and keeps it on the phone. The standard choice is small English (int8), about 375 MB, from [csukuangfj/sherpa-onnx-whisper-small.en](https://huggingface.co/csukuangfj/sherpa-onnx-whisper-small.en). A faster model is about 160 MB. A larger one is about 900 MB. Later episodes reuse the download for that size. A 50-minute episode can take longer than the episode itself, especially on a phone several years old. Phones from about the last five years are the intended fit.
 
 The recognizer is [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) 1.13.8, licensed under Apache-2.0. The Android library is vendored at `app/libs/sherpa-onnx-1.13.8.aar` (arm64-v8a only). Source for that version is tag [v1.13.8](https://github.com/k2-fsa/sherpa-onnx/releases/tag/v1.13.8). Upstream's gitignore skips `libs/`, so that file is added on purpose. The Whisper weights are not in this repository. Those weights are OpenAI's Whisper small.en model, converted for sherpa-onnx, and the original model is under the MIT license ([openai/whisper](https://github.com/openai/whisper)).
 

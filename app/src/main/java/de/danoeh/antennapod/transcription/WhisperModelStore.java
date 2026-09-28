@@ -21,41 +21,36 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * Whisper small English, int8. Chosen for phones from about the last five years.
- * The weights are downloaded on first Transcribe. They are not in the apk.
- * The download is about 375 MB. See the Play listing and the README.
+ * Whisper English int8 weights. They are downloaded on first Transcribe for the chosen size.
+ * They are not in the apk. Standard is small English, about 375 MB.
  */
 final class WhisperModelStore {
     private static final String TAG = "Transcribe";
-    private static final String MODEL_BASE =
-            "https://huggingface.co/csukuangfj/sherpa-onnx-whisper-small.en/resolve/main/";
-    private static final long MIN_FREE_BYTES = 500L * 1024L * 1024L;
+    private static final String TOKENS_SHA =
+            "306cd27f03c1a714eca7108e03d66b7dc042abe8c258b44c199a7ed9838dd930";
 
-    static final String ENCODER_NAME = "small.en-encoder.int8.onnx";
-    static final String DECODER_NAME = "small.en-decoder.int8.onnx";
-    static final String TOKENS_NAME = "small.en-tokens.txt";
-
-    private static final ModelFile ENCODER = new ModelFile(
-            ENCODER_NAME,
-            "8bdac288f369aa94ee2194059238c465ed82ea9d47ee8fa4a8c0a891873e462f");
-    private static final ModelFile DECODER = new ModelFile(
-            DECODER_NAME,
-            "710ccf890e10f3faa15f51ec346081a2723c9f3adb6e4da81c6573a5a6f877fb");
-    private static final ModelFile TOKENS = new ModelFile(
-            TOKENS_NAME,
-            "306cd27f03c1a714eca7108e03d66b7dc042abe8c258b44c199a7ed9838dd930");
+    static Spec specFor(String id) {
+        if (Spec.BASE.id.equals(id)) {
+            return Spec.BASE;
+        }
+        if (Spec.MEDIUM.id.equals(id)) {
+            return Spec.MEDIUM;
+        }
+        return Spec.SMALL;
+    }
 
     private final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(2, TimeUnit.MINUTES)
             .build();
 
-    File ensure(Context context, CancelFlag cancel, DownloadProgress progress) throws IOException {
+    File ensure(Context context, Spec spec, CancelFlag cancel, DownloadProgress progress)
+            throws IOException {
         File directory = modelDir(context);
         if (!directory.exists() && !directory.mkdirs()) {
             throw new IOException("Could not create the model folder");
         }
-        ModelFile[] files = new ModelFile[] {ENCODER, DECODER, TOKENS};
+        ModelFile[] files = new ModelFile[] {spec.encoder, spec.decoder, spec.tokens};
         boolean missing = false;
         for (ModelFile file : files) {
             if (!verified(directory, file)) {
@@ -64,18 +59,18 @@ final class WhisperModelStore {
             }
         }
         if (missing) {
-            ensureSpace(directory);
+            ensureSpace(directory, spec.minFreeBytes);
         }
         for (ModelFile file : files) {
             if (cancel.isCancelled()) {
                 throw new InterruptedIOException("cancelled");
             }
-            ensureFile(directory, file, cancel, progress);
+            ensureFile(directory, spec, file, cancel, progress);
         }
         return directory;
     }
 
-    private void ensureFile(File directory, ModelFile model, CancelFlag cancel,
+    private void ensureFile(File directory, Spec spec, ModelFile model, CancelFlag cancel,
                             DownloadProgress progress) throws IOException {
         File target = new File(directory, model.name);
         if (verified(directory, model)) {
@@ -90,12 +85,12 @@ final class WhisperModelStore {
                 throw new IOException("Could not replace a bad model file");
             }
         }
-        download(directory, model, cancel, progress);
+        download(directory, spec, model, cancel, progress);
     }
 
-    private void download(File directory, ModelFile model, CancelFlag cancel,
+    private void download(File directory, Spec spec, ModelFile model, CancelFlag cancel,
                           DownloadProgress progress) throws IOException {
-        Request request = new Request.Builder().url(MODEL_BASE + model.name).build();
+        Request request = new Request.Builder().url(spec.baseUrl + model.name).build();
         File partial = new File(directory, model.name + ".partial");
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful() || response.body() == null) {
@@ -156,9 +151,9 @@ final class WhisperModelStore {
         }
     }
 
-    private static void ensureSpace(File directory) throws IOException {
+    private static void ensureSpace(File directory, long minFreeBytes) throws IOException {
         StatFs stat = new StatFs(directory.getAbsolutePath());
-        if (stat.getAvailableBytes() < MIN_FREE_BYTES) {
+        if (stat.getAvailableBytes() < minFreeBytes) {
             throw new IOException("Not enough free space for the transcription model");
         }
     }
@@ -224,7 +219,56 @@ final class WhisperModelStore {
         void onDownload(long doneBytes, long totalBytes);
     }
 
-    private static final class ModelFile {
+    static final class Spec {
+        static final Spec BASE = new Spec(
+                "base",
+                "https://huggingface.co/csukuangfj/sherpa-onnx-whisper-base.en/resolve/main/",
+                160,
+                250L * 1024L * 1024L,
+                "base.en-encoder.int8.onnx",
+                "ef6b936f4c9b1d90a3b68634b60c4ed8576b26172b33c2535ec0e933c9edb823",
+                "base.en-decoder.int8.onnx",
+                "f7162ad6db2dbef16cfaeaa7f945b9d7dd9c1b8d472f6aca82f2273d185e4d41");
+        static final Spec SMALL = new Spec(
+                "small",
+                "https://huggingface.co/csukuangfj/sherpa-onnx-whisper-small.en/resolve/main/",
+                375,
+                500L * 1024L * 1024L,
+                "small.en-encoder.int8.onnx",
+                "8bdac288f369aa94ee2194059238c465ed82ea9d47ee8fa4a8c0a891873e462f",
+                "small.en-decoder.int8.onnx",
+                "710ccf890e10f3faa15f51ec346081a2723c9f3adb6e4da81c6573a5a6f877fb");
+        static final Spec MEDIUM = new Spec(
+                "medium",
+                "https://huggingface.co/csukuangfj/sherpa-onnx-whisper-medium.en/resolve/main/",
+                900,
+                1100L * 1024L * 1024L,
+                "medium.en-encoder.int8.onnx",
+                "5a8e3a36619e0b67db9320eef3152db59d4b440f5ce0212d2c162a61b750bf80",
+                "medium.en-decoder.int8.onnx",
+                "7303be339ed4e51f4ffb7ae84f3803b10cf8e67e1dcf8a98cb4d843f0dea0141");
+
+        final String id;
+        final String baseUrl;
+        final int approxMegabytes;
+        final long minFreeBytes;
+        final ModelFile encoder;
+        final ModelFile decoder;
+        final ModelFile tokens;
+
+        private Spec(String id, String baseUrl, int approxMegabytes, long minFreeBytes,
+                     String encoderName, String encoderSha, String decoderName, String decoderSha) {
+            this.id = id;
+            this.baseUrl = baseUrl;
+            this.approxMegabytes = approxMegabytes;
+            this.minFreeBytes = minFreeBytes;
+            this.encoder = new ModelFile(encoderName, encoderSha);
+            this.decoder = new ModelFile(decoderName, decoderSha);
+            this.tokens = new ModelFile(id + ".en-tokens.txt", TOKENS_SHA);
+        }
+    }
+
+    static final class ModelFile {
         final String name;
         final String sha256;
 

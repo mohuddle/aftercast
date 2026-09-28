@@ -8,7 +8,7 @@ Subscriptions, episode files, playback position, settings, and transcripts are s
 
 Transcription runs only when you choose it on a downloaded episode. The audio is read on the phone and is not uploaded to be transcribed. The transcript is saved beside that download.
 
-The speech model is not in the install file. The first transcription downloads Whisper small English (about 375 MB) from Hugging Face (`csukuangfj/sherpa-onnx-whisper-small.en`) and keeps it on the phone. That download is an ordinary file download: Hugging Face can see the requesting IP address. The episode audio is not part of that request.
+The speech model is not in the install file. The first transcription downloads the Whisper English model selected in Playback settings and keeps it on the phone. The standard choice is small English, about 375 MB. A faster model is about 160 MB and a larger one is about 900 MB. The files come from Hugging Face. That download is an ordinary file download: Hugging Face can see the requesting IP address. The episode audio is not part of that request.
 
 A crash log, if one exists, stays on the phone until you copy it yourself from the bug-report screen. Aftercast does not send it anywhere.
 

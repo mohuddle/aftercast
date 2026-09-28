@@ -48,6 +48,10 @@ public abstract class UserPreferences {
     public static final String PREF_THEME_BLACK = "prefThemeBlack";
     public static final String PREF_TINTED_COLORS = "prefTintedColors";
     public static final String PREF_APP_ICON = "prefAppIcon";
+    public static final String PREF_TRANSCRIPTION_MODEL = "prefTranscriptionModel";
+    public static final String TRANSCRIPTION_MODEL_BASE = "base";
+    public static final String TRANSCRIPTION_MODEL_SMALL = "small";
+    public static final String TRANSCRIPTION_MODEL_MEDIUM = "medium";
     public static final String APP_ICON_TEAL = "teal";
     public static final String PREF_HIDDEN_DRAWER_ITEMS = "prefHiddenDrawerItems";
     public static final String PREF_DRAWER_ITEM_ORDER = "prefDrawerItemOrder";
@@ -187,6 +191,15 @@ public abstract class UserPreferences {
 
     public static boolean getIsBlackTheme() {
         return prefs.getBoolean(PREF_THEME_BLACK, false);
+    }
+
+    /** Whisper size used the next time a transcription starts. Standard is the default. */
+    public static String getTranscriptionModel() {
+        String value = prefs.getString(PREF_TRANSCRIPTION_MODEL, TRANSCRIPTION_MODEL_SMALL);
+        if (TRANSCRIPTION_MODEL_BASE.equals(value) || TRANSCRIPTION_MODEL_MEDIUM.equals(value)) {
+            return value;
+        }
+        return TRANSCRIPTION_MODEL_SMALL;
     }
 
     public static boolean getIsThemeColorTinted() {

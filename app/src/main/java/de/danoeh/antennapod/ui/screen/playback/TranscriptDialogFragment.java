@@ -1,33 +1,32 @@
 package de.danoeh.antennapod.ui.screen.playback;
 
 import android.app.Dialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
+import android.text.Layout;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.TextPaint;
+import android.text.method.ArrowKeyMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.MetricAffectingSpan;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
-import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.databinding.TranscriptDialogBinding;
-import de.danoeh.antennapod.event.MessageEvent;
 import de.danoeh.antennapod.event.PlayerStatusEvent;
 import de.danoeh.antennapod.event.TranscribeEvent;
 import de.danoeh.antennapod.event.playback.PlaybackPositionEvent;
-import de.danoeh.antennapod.transcription.TranscribeService;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.model.feed.Transcript;
 import de.danoeh.antennapod.model.feed.TranscriptSegment;
@@ -35,28 +34,35 @@ import de.danoeh.antennapod.model.playback.Playable;
 import de.danoeh.antennapod.playback.service.PlaybackController;
 import de.danoeh.antennapod.storage.database.DBReader;
 import de.danoeh.antennapod.storage.preferences.PlaybackPreferences;
+import de.danoeh.antennapod.transcription.TranscribeService;
+import de.danoeh.antennapod.ui.common.Converter;
 import de.danoeh.antennapod.ui.transcript.TranscriptUtils;
-import io.reactivex.rxjava3.core.Maybe;
-import java.io.File;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class TranscriptDialogFragment extends DialogFragment
-        implements TranscriptAdapter.SegmentClickListener {
+public class TranscriptDialogFragment extends DialogFragment {
     public static final String TAG = "TranscriptFragment";
     private static final String ARG_MEDIA_ID = "media_id";
     private TranscriptDialogBinding viewBinding;
     private Disposable disposable;
     private Playable media;
     private Transcript transcript;
-    private TranscriptAdapter adapter = null;
+    private List<SpokenSentence> sentences = Collections.emptyList();
+    private int[] sentenceStarts = new int[0];
+    private int[] sentenceEnds = new int[0];
+    private int highlighted = -1;
     private boolean doInitialScroll = true;
     private boolean reloadFromProgress = false;
-    private LinearLayoutManager layoutManager;
+    private final SelectableTranscriptTouch touch = new SelectableTranscriptTouch();
 
     public static TranscriptDialogFragment newInstance(long mediaId) {
         TranscriptDialogFragment fragment = new TranscriptDialogFragment();
@@ -87,19 +93,13 @@ public class TranscriptDialogFragment extends DialogFragment
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         viewBinding = TranscriptDialogBinding.inflate(getLayoutInflater());
-        layoutManager = new LinearLayoutManager(getContext());
-        viewBinding.transcriptList.setLayoutManager(layoutManager);
-
-        adapter = new TranscriptAdapter(getContext(), this);
-        viewBinding.transcriptList.setAdapter(adapter);
-        viewBinding.transcriptList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                    viewBinding.followAudioCheckbox.setChecked(false);
-                }
+        viewBinding.transcriptText.setTextIsSelectable(true);
+        viewBinding.transcriptText.setMovementMethod(touch);
+        viewBinding.transcriptScroll.setOnTouchListener((view, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                viewBinding.followAudioCheckbox.setChecked(false);
             }
+            return false;
         });
 
         viewBinding.toolbar.inflateMenu(R.menu.transcript);
@@ -109,64 +109,10 @@ public class TranscriptDialogFragment extends DialogFragment
         viewBinding.progLoading.setVisibility(View.VISIBLE);
         doInitialScroll = true;
 
-        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
+        return new MaterialAlertDialogBuilder(requireContext())
                 .setView(viewBinding.getRoot())
                 .setNegativeButton(R.string.close_label, null)
                 .create();
-        setMultiselectMode(false);
-        return dialog;
-    }
-
-    private void setMultiselectMode(boolean multiselectMode) {
-        adapter.setMultiselectMode(multiselectMode);
-        viewBinding.toolbar.getMenu().findItem(R.id.action_copy).setVisible(multiselectMode);
-        viewBinding.toolbar.getMenu().findItem(R.id.action_cancel_copy).setVisible(multiselectMode);
-        viewBinding.toolbar.getMenu().findItem(R.id.action_select_all).setVisible(multiselectMode);
-        viewBinding.toolbar.getMenu().findItem(R.id.action_refresh).setVisible(!multiselectMode);
-        viewBinding.followAudioCheckbox.setChecked(!multiselectMode);
-    }
-
-    private void copySelectedText() {
-        String selectedText = adapter.getSelectedText();
-        ClipboardManager clipboardManager = ContextCompat.getSystemService(requireContext(), ClipboardManager.class);
-        if (clipboardManager != null) {
-            clipboardManager.setPrimaryClip(ClipData.newPlainText(getString(R.string.transcript), selectedText));
-        }
-        if (Build.VERSION.SDK_INT <= 32) {
-            EventBus.getDefault().post(new MessageEvent(getString(R.string.copied_to_clipboard)));
-        }
-    }
-
-    @Override
-    public void onTranscriptClicked(int pos, TranscriptSegment segment) {
-        if (adapter.isMultiselectMode()) {
-            adapter.toggleSelection(pos);
-        } else {
-            long startTime = segment.getStartTime();
-            long endTime = segment.getEndTime();
-
-            scrollToPosition(pos);
-            PlaybackController.bindToMedia3Service(getActivity(), controller -> {
-                if (!(controller.getCurrentPosition() >= startTime
-                        && controller.getCurrentPosition() <= endTime)) {
-                    controller.seekTo(startTime);
-                } else if (controller.isPlaying()) {
-                    controller.pause();
-                } else {
-                    controller.play();
-                }
-            });
-            adapter.notifyItemChanged(pos);
-            viewBinding.followAudioCheckbox.setChecked(true);
-        }
-    }
-
-    @Override
-    public void onTranscriptLongClicked(int position, TranscriptSegment seg) {
-        if (!adapter.isMultiselectMode()) {
-            setMultiselectMode(true);
-            adapter.toggleSelection(position);
-        }
     }
 
     @Override
@@ -197,18 +143,18 @@ public class TranscriptDialogFragment extends DialogFragment
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(PlaybackPositionEvent event) {
-        if (!followsPlayback()) {
+        if (viewBinding == null || viewBinding.transcriptText.hasSelection() || sentences.isEmpty()) {
             return;
         }
-        int pos = transcript.findSegmentIndexBefore(event.getPosition());
-        scrollToPosition(pos);
-    }
-
-    private boolean followsPlayback() {
-        if (!(media instanceof FeedMedia) || transcript == null) {
-            return false;
+        if (!(media instanceof FeedMedia)
+                || ((FeedMedia) media).getId() != PlaybackPreferences.getCurrentlyPlayingFeedMediaId()) {
+            return;
         }
-        return ((FeedMedia) media).getId() == PlaybackPreferences.getCurrentlyPlayingFeedMediaId();
+        int pos = sentenceAt(event.getPosition());
+        highlightSentence(pos);
+        if (viewBinding.followAudioCheckbox.isChecked()) {
+            scrollToSentence(pos);
+        }
     }
 
     private void loadMediaInfo(boolean forceRefresh) {
@@ -249,16 +195,16 @@ public class TranscriptDialogFragment extends DialogFragment
         })
         .subscribeOn(Schedulers.computation())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(media -> onMediaChanged((Playable) media),
+        .subscribe(loaded -> onMediaChanged((Playable) loaded),
                 error -> Log.e(TAG, Log.getStackTraceString(error)));
     }
 
-    private void onMediaChanged(Playable media) {
-        if (!(media instanceof FeedMedia) || viewBinding == null) {
+    private void onMediaChanged(Playable loaded) {
+        if (!(loaded instanceof FeedMedia) || viewBinding == null) {
             return;
         }
-        this.media = media;
-        FeedMedia feedMedia = (FeedMedia) media;
+        this.media = loaded;
+        FeedMedia feedMedia = (FeedMedia) loaded;
         feedMedia.setTranscript(transcript);
 
         boolean publisher = Boolean.TRUE.equals(feedMedia.hasTranscript());
@@ -271,12 +217,12 @@ public class TranscriptDialogFragment extends DialogFragment
         }
 
         viewBinding.progLoading.setVisibility(View.GONE);
-        int keepPosition = layoutManager.findFirstVisibleItemPosition();
-        if (transcript != null) {
-            adapter.setMedia(feedMedia);
+        int keepScroll = viewBinding.transcriptScroll.getScrollY();
+        if (transcript != null && !viewBinding.transcriptText.hasSelection()) {
+            showTranscript(feedMedia);
         }
-        if (reloadFromProgress && !viewBinding.followAudioCheckbox.isChecked() && keepPosition > 0) {
-            layoutManager.scrollToPosition(keepPosition);
+        if (reloadFromProgress && !viewBinding.followAudioCheckbox.isChecked()) {
+            viewBinding.transcriptScroll.scrollTo(0, keepScroll);
         }
         TranscribeEvent sticky = EventBus.getDefault().getStickyEvent(TranscribeEvent.class);
         if (sticky != null && sticky.getMediaId() == feedMedia.getId()) {
@@ -287,6 +233,195 @@ public class TranscriptDialogFragment extends DialogFragment
         } else if (!active) {
             viewBinding.statusLine.setVisibility(View.GONE);
         }
+    }
+
+    private void showTranscript(FeedMedia feedMedia) {
+        Transcript source = feedMedia.getTranscript();
+        if (source == null) {
+            viewBinding.transcriptText.setText("");
+            sentences = Collections.emptyList();
+            sentenceStarts = new int[0];
+            sentenceEnds = new int[0];
+            highlighted = -1;
+            return;
+        }
+        sentences = spokenSentences(source);
+        sentenceStarts = new int[sentences.size()];
+        sentenceEnds = new int[sentences.size()];
+        SpannableStringBuilder text = new SpannableStringBuilder();
+        String lastSpeaker = null;
+        for (int index = 0; index < sentences.size(); index++) {
+            SpokenSentence sentence = sentences.get(index);
+            boolean hasSpeaker = sentence.speaker != null && !sentence.speaker.trim().isEmpty();
+            if (hasSpeaker && !sentence.speaker.equals(lastSpeaker)) {
+                if (text.length() > 0) {
+                    text.append("\n\n");
+                }
+                text.append(Converter.getDurationStringLong((int) sentence.startMs));
+                text.append(" • ").append(sentence.speaker).append('\n');
+                lastSpeaker = sentence.speaker;
+            } else if (text.length() > 0 && text.charAt(text.length() - 1) != '\n') {
+                text.append(' ');
+            }
+            int start = text.length();
+            text.append(sentence.text);
+            sentenceStarts[index] = start;
+            sentenceEnds[index] = Math.max(start + 1, text.length());
+            text.setSpan(new SeekSpan(index), start, sentenceEnds[index], Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        highlighted = -1;
+        viewBinding.transcriptText.setText(text);
+        viewBinding.transcriptText.setMovementMethod(touch);
+    }
+
+    private void seekToSegment(int index) {
+        if (index < 0 || index >= sentences.size()) {
+            return;
+        }
+        SpokenSentence sentence = sentences.get(index);
+        viewBinding.followAudioCheckbox.setChecked(true);
+        doInitialScroll = true;
+        highlightSentence(index);
+        scrollToSentence(index);
+        PlaybackController.bindToMedia3Service(getActivity(), controller -> {
+            if (!(controller.getCurrentPosition() >= sentence.startMs
+                    && controller.getCurrentPosition() <= sentence.endMs)) {
+                controller.seekTo(sentence.startMs);
+            } else if (controller.isPlaying()) {
+                controller.pause();
+            } else {
+                controller.play();
+            }
+        });
+    }
+
+    private void highlightSentence(int index) {
+        if (viewBinding == null || index == highlighted || index < 0 || index >= sentenceStarts.length) {
+            return;
+        }
+        CharSequence current = viewBinding.transcriptText.getText();
+        if (!(current instanceof Spannable)) {
+            return;
+        }
+        Spannable text = (Spannable) current;
+        CurrentSentence[] marks = text.getSpans(0, text.length(), CurrentSentence.class);
+        for (CurrentSentence mark : marks) {
+            text.removeSpan(mark);
+        }
+        text.setSpan(new CurrentSentence(), sentenceStarts[index], sentenceEnds[index],
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        highlighted = index;
+        viewBinding.transcriptText.invalidate();
+    }
+
+    private void scrollToSentence(int pos) {
+        if (viewBinding == null || pos < 0 || pos >= sentenceStarts.length) {
+            return;
+        }
+        if (!viewBinding.followAudioCheckbox.isChecked() && !doInitialScroll) {
+            return;
+        }
+        doInitialScroll = false;
+        viewBinding.transcriptText.post(() -> {
+            if (viewBinding == null) {
+                return;
+            }
+            Layout layout = viewBinding.transcriptText.getLayout();
+            if (layout == null) {
+                return;
+            }
+            int line = layout.getLineForOffset(sentenceStarts[pos]);
+            int lineTop = layout.getLineTop(line);
+            int padding = line > 0 ? lineTop - layout.getLineTop(line - 1) : 0;
+            int y = viewBinding.transcriptText.getTop() + lineTop - padding;
+            viewBinding.transcriptScroll.smoothScrollTo(0, Math.max(0, y));
+        });
+    }
+
+    private int sentenceAt(long timeMs) {
+        int found = 0;
+        for (int index = 0; index < sentences.size(); index++) {
+            if (sentences.get(index).startMs > timeMs) {
+                break;
+            }
+            found = index;
+        }
+        return found;
+    }
+
+    /**
+     * Stored cues are often a whole Whisper window or a publisher paragraph.
+     * Follow audio uses a sentence inside that cue, timed by its share of the characters.
+     */
+    private static List<SpokenSentence> spokenSentences(Transcript source) {
+        List<SpokenSentence> spoken = new ArrayList<>();
+        for (int index = 0; index < source.getSegmentCount(); index++) {
+            TranscriptSegment segment = source.getSegmentAt(index);
+            List<String> pieces = sentencePieces(segment.getWords());
+            if (pieces.isEmpty()) {
+                continue;
+            }
+            int characters = 0;
+            for (String piece : pieces) {
+                characters += piece.length();
+            }
+            long start = segment.getStartTime();
+            long end = Math.max(segment.getEndTime(), start + pieces.size());
+            long span = Math.max(1L, end - start);
+            long cursor = start;
+            for (int pieceIndex = 0; pieceIndex < pieces.size(); pieceIndex++) {
+                String body = pieces.get(pieceIndex);
+                long pieceEnd = pieceIndex == pieces.size() - 1
+                        ? end
+                        : cursor + Math.max(1L, span * body.length() / characters);
+                if (pieceEnd <= cursor) {
+                    pieceEnd = cursor + 1L;
+                }
+                if (pieceEnd > end) {
+                    pieceEnd = end;
+                }
+                spoken.add(new SpokenSentence(cursor, pieceEnd, body, segment.getSpeaker()));
+                cursor = pieceEnd;
+            }
+        }
+        return spoken;
+    }
+
+    private static List<String> sentencePieces(String words) {
+        List<String> pieces = new ArrayList<>();
+        if (words == null || words.trim().isEmpty()) {
+            return pieces;
+        }
+        String[] marked = words.trim().split("(?<=[.!?])\\s+|\\n+");
+        for (String markedPiece : marked) {
+            String body = markedPiece.trim();
+            if (body.isEmpty()) {
+                continue;
+            }
+            String[] wordList = body.split("\\s+");
+            if (wordList.length <= 28) {
+                pieces.add(body);
+                continue;
+            }
+            StringBuilder chunk = new StringBuilder();
+            int count = 0;
+            for (String word : wordList) {
+                if (chunk.length() > 0) {
+                    chunk.append(' ');
+                }
+                chunk.append(word);
+                count++;
+                if (count >= 18) {
+                    pieces.add(chunk.toString());
+                    chunk.setLength(0);
+                    count = 0;
+                }
+            }
+            if (chunk.length() > 0) {
+                pieces.add(chunk.toString());
+            }
+        }
+        return pieces;
     }
 
     private void showStatus(TranscribeEvent event) {
@@ -314,38 +449,6 @@ public class TranscriptDialogFragment extends DialogFragment
         return file.isFile() && file.length() > 0;
     }
 
-    public void scrollToPosition(int pos) {
-        if (pos <= 0) {
-            return;
-        }
-        if (!viewBinding.followAudioCheckbox.isChecked() && !doInitialScroll) {
-            return;
-        }
-        doInitialScroll = false;
-
-        boolean quickScroll = Math.abs(layoutManager.findFirstVisibleItemPosition() - pos) > 5;
-        if (layoutManager.findFirstVisibleItemPosition() < pos - 1
-                && !viewBinding.transcriptList.canScrollVertically(1)) {
-            return;
-        }
-        if (quickScroll) {
-            viewBinding.transcriptList.scrollToPosition(pos - 1);
-            // Additionally, smooth scroll, so that currently active segment is on top of screen
-        }
-        LinearSmoothScroller smoothScroller = new LinearSmoothScroller(getContext()) {
-            @Override
-            protected int getVerticalSnapPreference() {
-                return LinearSmoothScroller.SNAP_TO_START;
-            }
-
-            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
-                return (quickScroll ? 200 : 1000) / (float) displayMetrics.densityDpi;
-            }
-        };
-        smoothScroller.setTargetPosition(pos - 1);
-        layoutManager.startSmoothScroll(smoothScroller);
-    }
-
     @Override
     public void onStop() {
         super.onStop();
@@ -356,22 +459,100 @@ public class TranscriptDialogFragment extends DialogFragment
     }
 
     private boolean onMenuItemClick(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_refresh) {
+        if (item.getItemId() == R.id.action_refresh) {
             viewBinding.progLoading.setVisibility(View.VISIBLE);
             loadMediaInfo(true);
             return true;
-        } else if (id == R.id.action_copy) {
-            copySelectedText();
-            setMultiselectMode(false);
-            return true;
-        } else if (id == R.id.action_cancel_copy) {
-            setMultiselectMode(false);
-            return true;
-        } else if (id == R.id.action_select_all) {
-            adapter.selectAll();
-            return true;
         }
         return false;
+    }
+
+    private class SelectableTranscriptTouch extends ArrowKeyMovementMethod {
+        private float downX;
+        private float downY;
+
+        @Override
+        public boolean onTouchEvent(TextView widget, Spannable buffer, MotionEvent event) {
+            int action = event.getAction();
+            if (action == MotionEvent.ACTION_DOWN) {
+                downX = event.getX();
+                downY = event.getY();
+            }
+            boolean handled = super.onTouchEvent(widget, buffer, event);
+            if (action == MotionEvent.ACTION_UP && !widget.hasSelection()) {
+                float dx = Math.abs(event.getX() - downX);
+                float dy = Math.abs(event.getY() - downY);
+                if (dx < 16 && dy < 16) {
+                    SeekSpan span = spanAt(widget, buffer, event);
+                    if (span != null) {
+                        seekToSegment(span.index);
+                        return true;
+                    }
+                }
+            }
+            return handled;
+        }
+
+        private SeekSpan spanAt(TextView widget, Spannable buffer, MotionEvent event) {
+            int x = (int) event.getX() - widget.getTotalPaddingLeft() + widget.getScrollX();
+            int y = (int) event.getY() - widget.getTotalPaddingTop() + widget.getScrollY();
+            Layout layout = widget.getLayout();
+            if (layout == null) {
+                return null;
+            }
+            int line = layout.getLineForVertical(y);
+            int offset = layout.getOffsetForHorizontal(line, x);
+            SeekSpan[] spans = buffer.getSpans(offset, offset, SeekSpan.class);
+            return spans.length == 0 ? null : spans[0];
+        }
+    }
+
+    private static final class SeekSpan extends ClickableSpan {
+        final int index;
+
+        SeekSpan(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public void onClick(@NonNull View widget) {
+        }
+
+        @Override
+        public void updateDrawState(@NonNull TextPaint paint) {
+            paint.setUnderlineText(false);
+        }
+    }
+
+    /** Heavier Newsreader weight. A background wash was too close to the page color. */
+    private static final class CurrentSentence extends MetricAffectingSpan {
+        @Override
+        public void updateDrawState(TextPaint paint) {
+            apply(paint);
+        }
+
+        @Override
+        public void updateMeasureState(TextPaint paint) {
+            apply(paint);
+        }
+
+        private static void apply(TextPaint paint) {
+            paint.setFakeBoldText(true);
+            paint.setFontVariationSettings("'opsz' 18, 'wght' 760");
+        }
+    }
+
+    private static final class SpokenSentence {
+        final long startMs;
+        final long endMs;
+        final String text;
+        final String speaker;
+
+        SpokenSentence(long startMs, long endMs, String text, String speaker) {
+            this.startMs = startMs;
+            this.endMs = endMs;
+            this.text = text;
+            this.speaker = speaker;
+        }
     }
 }

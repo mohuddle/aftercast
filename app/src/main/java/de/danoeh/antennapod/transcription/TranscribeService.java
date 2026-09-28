@@ -27,6 +27,7 @@ import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.event.TranscribeEvent;
 import de.danoeh.antennapod.model.MediaMetadataRetrieverCompat;
 import de.danoeh.antennapod.model.feed.FeedMedia;
+import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.ui.common.Converter;
 import java.io.File;
 import java.io.InterruptedIOException;
@@ -198,11 +199,13 @@ public class TranscribeService extends android.app.Service {
                 succeed(mediaId, duration);
                 return;
             }
-            update(mediaId, TranscribeEvent.State.DOWNLOADING, 0, duration,
-                    getString(R.string.transcribe_downloading_model), true);
-            File modelDir = new WhisperModelStore().ensure(this, cancelFlag, (done, total) -> {
+            WhisperModelStore.Spec spec = WhisperModelStore.specFor(UserPreferences.getTranscriptionModel());
+            Log.i(TAG, "Using transcription model " + spec.id);
+            String downloading = getString(R.string.transcribe_downloading_model, spec.approxMegabytes);
+            update(mediaId, TranscribeEvent.State.DOWNLOADING, 0, duration, downloading, true);
+            File modelDir = new WhisperModelStore().ensure(this, spec, cancelFlag, (done, total) -> {
                 int percent = total <= 0 ? 0 : (int) Math.min(100L, done * 100L / total);
-                String text = getString(R.string.transcribe_downloading_model);
+                String text = downloading;
                 if (total > 0) {
                     text = text + " " + percent + "%";
                 }
@@ -214,7 +217,7 @@ public class TranscribeService extends android.app.Service {
             }
             update(mediaId, TranscribeEvent.State.LOADING, 0, duration,
                     getString(R.string.transcribe_loading_model), true);
-            recognizer = createRecognizer(modelDir);
+            recognizer = createRecognizer(modelDir, spec);
             long cursor = GeneratedTranscript.resumeMs(path);
             String previousTail = GeneratedTranscript.lastBody(path);
             while (cursor + 250 < duration) {
@@ -270,10 +273,10 @@ public class TranscribeService extends android.app.Service {
         }
     }
 
-    private OfflineRecognizer createRecognizer(File directory) {
+    private OfflineRecognizer createRecognizer(File directory, WhisperModelStore.Spec spec) {
         OfflineWhisperModelConfig whisper = new OfflineWhisperModelConfig();
-        whisper.setEncoder(new File(directory, WhisperModelStore.ENCODER_NAME).getAbsolutePath());
-        whisper.setDecoder(new File(directory, WhisperModelStore.DECODER_NAME).getAbsolutePath());
+        whisper.setEncoder(new File(directory, spec.encoder.name).getAbsolutePath());
+        whisper.setDecoder(new File(directory, spec.decoder.name).getAbsolutePath());
         whisper.setLanguage("en");
         whisper.setTask("transcribe");
         whisper.setTailPaddings(1000);
@@ -282,7 +285,7 @@ public class TranscribeService extends android.app.Service {
 
         OfflineModelConfig model = new OfflineModelConfig();
         model.setWhisper(whisper);
-        model.setTokens(new File(directory, WhisperModelStore.TOKENS_NAME).getAbsolutePath());
+        model.setTokens(new File(directory, spec.tokens.name).getAbsolutePath());
         model.setNumThreads(2);
         model.setDebug(false);
         model.setProvider("cpu");
