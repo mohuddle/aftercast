@@ -1,15 +1,11 @@
 package de.danoeh.antennapod.ui.screen.playback;
 
 import android.app.Dialog;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.TextPaint;
 import android.text.method.ArrowKeyMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.MetricAffectingSpan;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -310,11 +306,11 @@ public class TranscriptDialogFragment extends DialogFragment {
             return;
         }
         Spannable text = (Spannable) current;
-        CurrentSentence[] marks = text.getSpans(0, text.length(), CurrentSentence.class);
-        for (CurrentSentence mark : marks) {
+        TranscriptTextView.Mark[] marks = text.getSpans(0, text.length(), TranscriptTextView.Mark.class);
+        for (TranscriptTextView.Mark mark : marks) {
             text.removeSpan(mark);
         }
-        text.setSpan(new CurrentSentence(), sentenceStarts[index], sentenceEnds[index],
+        text.setSpan(new TranscriptTextView.Mark(), sentenceStarts[index], sentenceEnds[index],
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         highlighted = index;
         viewBinding.transcriptText.invalidate();
@@ -522,35 +518,12 @@ public class TranscriptDialogFragment extends DialogFragment {
         }
     }
 
-    private static final class SeekSpan extends ClickableSpan {
+    /** Hit target only. It does not paint, so it cannot clear the playing underline. */
+    private static final class SeekSpan {
         final int index;
 
         SeekSpan(int index) {
             this.index = index;
-        }
-
-        @Override
-        public void onClick(@NonNull View widget) {
-        }
-
-        @Override
-        public void updateDrawState(@NonNull TextPaint paint) {
-            paint.setUnderlineText(false);
-        }
-    }
-
-    /** Heavier Newsreader weight. A background wash was too close to the page color. */
-    private static final class CurrentSentence extends MetricAffectingSpan {
-        @Override
-        public void updateDrawState(TextPaint paint) {
-            paint.setFakeBoldText(true);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                paint.setFontVariationSettings("'opsz' 18, 'wght' 760");
-            }
-        }
-
-        @Override
-        public void updateMeasureState(TextPaint paint) {
         }
     }
 

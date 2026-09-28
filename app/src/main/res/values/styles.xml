@@ -21,8 +21,8 @@
     <style name="TextAppearance.Aftercast.Transcript" parent="TextAppearance.Material3.BodyLarge">
         <item name="android:fontFamily">@font/newsreader</item>
         <item name="fontFamily">@font/newsreader</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:fontVariationSettings">\'opsz\' 18, \'wght\' 480</item>
+        <item name="android:textSize">21sp</item>
+        <item name="android:fontVariationSettings">\'opsz\' 21, \'wght\' 480</item>
         <item name="android:letterSpacing">0.01</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
