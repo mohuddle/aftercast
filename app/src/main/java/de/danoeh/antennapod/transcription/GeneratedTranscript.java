@@ -85,7 +85,9 @@ final class GeneratedTranscript {
     }
 
     private static File jsonFile(String mediaPath) {
-        return new File(mediaPath + FeedMedia.GENERATED_TRANSCRIPT_SUFFIX);
+        File file = new File(mediaPath + FeedMedia.GENERATED_TRANSCRIPT_SUFFIX);
+        recover(file);
+        return file;
     }
 
     private static File marker(String mediaPath) {
@@ -127,15 +129,41 @@ final class GeneratedTranscript {
             throw new IOException("Could not create " + directory);
         }
         File temporary = new File(directory, file.getName() + ".tmp");
+        File previous = new File(directory, file.getName() + ".old");
         try (FileOutputStream output = new FileOutputStream(temporary)) {
             output.write(json.getBytes(StandardCharsets.UTF_8));
             output.getFD().sync();
         }
-        if (file.exists() && !file.delete()) {
+        if (previous.exists() && !previous.delete()) {
+            Log.w(TAG, "Could not remove an old transcript backup");
+        }
+        if (file.exists() && !file.renameTo(previous)) {
             throw new IOException("Could not replace the transcript");
         }
         if (!temporary.renameTo(file)) {
+            if (previous.exists() && !previous.renameTo(file)) {
+                Log.e(TAG, "Could not restore the transcript after a failed replace");
+            }
             throw new IOException("Could not store the transcript");
+        }
+        if (previous.exists() && !previous.delete()) {
+            Log.w(TAG, "Could not remove the transcript backup");
+        }
+    }
+
+    private static void recover(File file) {
+        File previous = new File(file.getPath() + ".old");
+        File temporary = new File(file.getPath() + ".tmp");
+        if (!file.isFile()) {
+            if (previous.isFile()) {
+                previous.renameTo(file);
+            } else if (temporary.isFile() && temporary.length() > 2) {
+                temporary.renameTo(file);
+            }
+            return;
+        }
+        if (previous.exists() && !previous.delete()) {
+            Log.w(TAG, "Could not remove a leftover transcript backup");
         }
     }
 }

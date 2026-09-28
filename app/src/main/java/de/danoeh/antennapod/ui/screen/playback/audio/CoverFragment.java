@@ -404,9 +404,13 @@ public class CoverFragment extends Fragment {
         if (event.getState() == TranscribeEvent.State.DONE) {
             transcriptComplete = true;
             transcribedMs = Math.max(transcribedMs, event.getTotalMs());
-        } else if (event.getState() == TranscribeEvent.State.RUNNING || event.isTerminal()) {
+        } else if (event.getState() == TranscribeEvent.State.RUNNING) {
             transcribedMs = event.getDoneMs();
             transcriptComplete = false;
+        } else if (event.isTerminal()) {
+            transcriptComplete = false;
+            long saved = TranscribeService.transcribedMs(((FeedMedia) media).getLocalFileUrl());
+            transcribedMs = Math.max(transcribedMs, Math.max(event.getDoneMs(), saved));
         }
         updateTranscriptButton();
     }

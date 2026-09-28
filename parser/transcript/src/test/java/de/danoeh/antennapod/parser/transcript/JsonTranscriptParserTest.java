@@ -31,6 +31,19 @@ public class JsonTranscriptParserTest {
     }
 
     @Test
+    public void testParseKeepsEachOnDeviceSentence() {
+        Transcript result = JsonTranscriptParser.parse(jsonStr, false);
+        assertEquals(4, result.getSegmentCount());
+        assertEquals("And", result.getSegmentAt(0).getWords());
+        assertEquals(800L, result.getSegmentAt(0).getStartTime());
+        assertEquals(1900L, result.getSegmentAt(0).getEndTime());
+        assertEquals("this merges", result.getSegmentAt(1).getWords());
+        assertEquals(1910L, result.getSegmentAt(1).getStartTime());
+        assertEquals("the", result.getSegmentAt(2).getWords());
+        assertEquals("person", result.getSegmentAt(3).getWords());
+    }
+
+    @Test
     public void testParse() {
         String type = "application/json";
         Transcript result = TranscriptParser.parse(jsonStr, type);

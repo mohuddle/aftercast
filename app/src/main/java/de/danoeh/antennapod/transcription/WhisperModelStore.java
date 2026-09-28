@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.nio.charset.StandardCharsets;
-import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
@@ -90,38 +89,52 @@ final class WhisperModelStore {
 
     private void download(File directory, Spec spec, ModelFile model, CancelFlag cancel,
                           DownloadProgress progress) throws IOException {
-        Request request = new Request.Builder().url(spec.baseUrl + model.name).build();
         File partial = new File(directory, model.name + ".partial");
-        try (Response response = client.newCall(request).execute()) {
+        long already = partial.isFile() ? partial.length() : 0L;
+        Request.Builder request = new Request.Builder().url(spec.baseUrl + model.name);
+        if (already > 0) {
+            request.header("Range", "bytes=" + already + "-");
+        }
+        try (Response response = client.newCall(request.build()).execute()) {
+            if (response.code() == 416) {
+                throw new IOException("Transcription model download was corrupted");
+            }
             if (!response.isSuccessful() || response.body() == null) {
                 throw new IOException("Could not download the transcription model ("
                         + response.code() + ")");
             }
-            long total = response.body().contentLength();
-            MessageDigest digest = sha256Digest();
-            long received = 0L;
+            boolean append = response.code() == 206 && already > 0;
+            if (!append) {
+                already = 0L;
+            }
+            long remaining = response.body().contentLength();
+            long total = remaining > 0 ? already + remaining : -1L;
+            long received = already;
             long lastReport = 0L;
             try (InputStream input = response.body().byteStream();
-                    DigestOutputStream output = new DigestOutputStream(new FileOutputStream(partial), digest)) {
+                    FileOutputStream output = new FileOutputStream(partial, append)) {
                 byte[] buffer = new byte[8192];
                 int count;
                 while ((count = input.read(buffer)) >= 0) {
                     if (cancel.isCancelled()) {
+                        output.getFD().sync();
                         throw new InterruptedIOException("cancelled");
                     }
                     output.write(buffer, 0, count);
                     received += count;
                     long now = SystemClock.elapsedRealtime();
                     if (now - lastReport > 400L || (total > 0 && received >= total)) {
-                        progress.onDownload(received, total);
+                        progress.onDownload(received, Math.max(total, 0L));
                         lastReport = now;
                     }
                 }
+                output.getFD().sync();
             }
-            String hash = hex(digest.digest());
-            if (!model.sha256.equals(hash)) {
+            if (!model.sha256.equals(sha256(partial))) {
                 throw new IOException("Transcription model download was corrupted");
             }
+        } catch (InterruptedIOException e) {
+            throw e;
         } catch (IOException e) {
             if (partial.exists() && !partial.delete()) {
                 Log.w(TAG, "Could not delete a partial model download");

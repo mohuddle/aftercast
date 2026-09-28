@@ -255,6 +255,9 @@ public class TranscribeService extends android.app.Service {
         } catch (OutOfMemoryError e) {
             Log.e(TAG, "Out of memory while transcribing", e);
             fail(mediaId, getString(R.string.transcribe_failed));
+        } catch (LinkageError e) {
+            Log.e(TAG, "Transcription library failed to load", e);
+            fail(mediaId, getString(R.string.transcribe_failed));
         } catch (Exception e) {
             Log.e(TAG, "Transcription failed", e);
             fail(mediaId, failureText(e));

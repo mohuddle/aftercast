@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.net.common.AntennapodHttpClient;
 import de.danoeh.antennapod.model.feed.Transcript;
+import de.danoeh.antennapod.parser.transcript.JsonTranscriptParser;
 import de.danoeh.antennapod.parser.transcript.TranscriptParser;
 import okhttp3.CacheControl;
 import okhttp3.Request;
@@ -109,7 +110,7 @@ public class TranscriptUtils {
             if (StringUtils.isEmpty(text)) {
                 return null;
             }
-            return TranscriptParser.parse(text, "application/json");
+            return JsonTranscriptParser.parse(text, false);
         } catch (IOException e) {
             Log.e(TAG, "Could not read generated transcript", e);
             return null;

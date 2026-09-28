@@ -1,6 +1,7 @@
 package de.danoeh.antennapod.ui.screen.playback;
 
 import android.app.Dialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Layout;
 import android.text.Spannable;
@@ -31,6 +32,7 @@ import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.model.feed.Transcript;
 import de.danoeh.antennapod.model.feed.TranscriptSegment;
 import de.danoeh.antennapod.model.playback.Playable;
+import de.danoeh.antennapod.playback.base.MediaItemAdapter;
 import de.danoeh.antennapod.playback.service.PlaybackController;
 import de.danoeh.antennapod.storage.database.DBReader;
 import de.danoeh.antennapod.storage.preferences.PlaybackPreferences;
@@ -283,15 +285,19 @@ public class TranscriptDialogFragment extends DialogFragment {
         doInitialScroll = true;
         highlightSentence(index);
         scrollToSentence(index);
+        if (!(media instanceof FeedMedia) || getActivity() == null) {
+            return;
+        }
+        long mediaId = ((FeedMedia) media).getId();
         PlaybackController.bindToMedia3Service(getActivity(), controller -> {
-            if (!(controller.getCurrentPosition() >= sentence.startMs
-                    && controller.getCurrentPosition() <= sentence.endMs)) {
-                controller.seekTo(sentence.startMs);
-            } else if (controller.isPlaying()) {
-                controller.pause();
-            } else {
-                controller.play();
+            String playingId = controller.getCurrentMediaItem() == null
+                    ? null : controller.getCurrentMediaItem().mediaId;
+            if (!String.valueOf(mediaId).equals(playingId)) {
+                controller.setMediaItem(MediaItemAdapter.fromMediaIdStub(mediaId));
+                controller.prepare();
             }
+            controller.seekTo(sentence.startMs);
+            controller.play();
         });
     }
 
@@ -477,6 +483,15 @@ public class TranscriptDialogFragment extends DialogFragment {
             if (action == MotionEvent.ACTION_DOWN) {
                 downX = event.getX();
                 downY = event.getY();
+                widget.getParent().requestDisallowInterceptTouchEvent(true);
+            } else if (action == MotionEvent.ACTION_MOVE && !widget.hasSelection()) {
+                float dx = Math.abs(event.getX() - downX);
+                float dy = Math.abs(event.getY() - downY);
+                if (dy > dx && dy > 24) {
+                    widget.getParent().requestDisallowInterceptTouchEvent(false);
+                }
+            } else if (widget.hasSelection()) {
+                widget.getParent().requestDisallowInterceptTouchEvent(true);
             }
             boolean handled = super.onTouchEvent(widget, buffer, event);
             if (action == MotionEvent.ACTION_UP && !widget.hasSelection()) {
@@ -528,17 +543,14 @@ public class TranscriptDialogFragment extends DialogFragment {
     private static final class CurrentSentence extends MetricAffectingSpan {
         @Override
         public void updateDrawState(TextPaint paint) {
-            apply(paint);
+            paint.setFakeBoldText(true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                paint.setFontVariationSettings("'opsz' 18, 'wght' 760");
+            }
         }
 
         @Override
         public void updateMeasureState(TextPaint paint) {
-            apply(paint);
-        }
-
-        private static void apply(TextPaint paint) {
-            paint.setFakeBoldText(true);
-            paint.setFontVariationSettings("'opsz' 18, 'wght' 760");
         }
     }
 

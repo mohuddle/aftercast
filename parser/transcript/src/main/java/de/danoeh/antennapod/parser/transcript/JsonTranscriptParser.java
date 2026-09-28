@@ -14,6 +14,17 @@ import de.danoeh.antennapod.model.feed.TranscriptSegment;
 
 public class JsonTranscriptParser {
     public static Transcript parse(String jsonStr) {
+        return parse(jsonStr, true);
+    }
+
+    /**
+     * @param mergeShortSegments publisher cues are joined into a few seconds of text.
+     *         On-device sentences already have their own times and must stay separate.
+     */
+    public static Transcript parse(String jsonStr, boolean mergeShortSegments) {
+        if (!mergeShortSegments) {
+            return parseEachSegment(jsonStr);
+        }
         try {
             Transcript transcript = new Transcript();
             long startTime = -1L;
@@ -106,5 +117,40 @@ public class JsonTranscriptParser {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static Transcript parseEachSegment(String jsonStr) {
+        JSONArray segments;
+        try {
+            segments = new JSONObject(jsonStr).getJSONArray("segments");
+        } catch (JSONException e) {
+            return null;
+        }
+        Transcript transcript = new Transcript();
+        Set<String> speakers = new HashSet<>();
+        for (int i = 0; i < segments.length(); i++) {
+            JSONObject jsonObject = segments.optJSONObject(i);
+            if (jsonObject == null) {
+                continue;
+            }
+            long startTime = (long) (jsonObject.optDouble("startTime", -1) * 1000L);
+            long endTime = (long) (jsonObject.optDouble("endTime", -1) * 1000L);
+            if (startTime < 0 || endTime < startTime) {
+                continue;
+            }
+            String speaker = jsonObject.optString("speaker");
+            speakers.add(speaker);
+            try {
+                transcript.addSegment(new TranscriptSegment(startTime, endTime,
+                        StringUtils.trim(jsonObject.optString("body")), speaker));
+            } catch (IllegalArgumentException ignored) {
+                // A cue that starts before the previous one cannot be shown in order.
+            }
+        }
+        if (transcript.getSegmentCount() == 0) {
+            return null;
+        }
+        transcript.setSpeakers(speakers);
+        return transcript;
     }
 }
