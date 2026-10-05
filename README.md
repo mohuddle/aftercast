@@ -4,6 +4,8 @@
 
 **Download once. Read later.**
 
+> A [Mobitecture](https://github.com/mohuddle) app · *apps, architected.*
+
 [![License](https://img.shields.io/badge/License-GPL--3.0-22c55e?style=for-the-badge)](LICENSE)
 [![Android](https://img.shields.io/badge/Android-6.0%2B-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com/about/versions/marshmallow)
 [![API](https://img.shields.io/badge/Target%20API-36-3DDC84?style=for-the-badge)](https://developer.android.com/about/versions)
@@ -19,6 +21,12 @@
 This project is derived from [AntennaPod](https://github.com/AntennaPod/AntennaPod) 3.12.2. AntennaPod is a separate project. The name, application id (`app.aftercast`), and launcher icon are Aftercast's.
 
 Aftercast has not been submitted to the Play Store. Publish it with an Aftercast signing key and an Aftercast Play Console account.
+
+---
+
+## Studio
+
+Aftercast is made by [Mobitecture](https://github.com/mohuddle) — mobile apps, architected. Studio palette accents: Blueprint `#4E5CF0`, Copper `#EE9A5B`.
 
 ---
 
@@ -155,3 +163,6 @@ The Java package namespace in this tree is still `de.danoeh.antennapod`. The ins
 ---
 
 Download once. Read later.
+
+---
+Made by [Mobitecture](https://github.com/mohuddle) · apps, architected.
