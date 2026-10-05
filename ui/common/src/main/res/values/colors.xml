@@ -10,22 +10,28 @@
     <color name="image_readability_tint">#80000000</color>
     <color name="feed_text_bg">#55333333</color>
 
-    <!-- Theme colors -->
-    <color name="background_light">#f9fcff</color>
-    <color name="background_elevated_light">#EFEEEE</color>
-    <color name="background_darktheme">#21272b</color>
-    <color name="background_elevated_darktheme">#2D3337</color>
+    <!-- Theme colors. Teal is the app color. Copper is the warm accent. -->
+    <color name="background_light">#F4F2ED</color>
+    <color name="background_elevated_light">#E6E1D7</color>
+    <color name="background_darktheme">#12141B</color>
+    <color name="background_elevated_darktheme">#1D2029</color>
     <color name="non_square_icon_background">#22777777</color>
     <color name="seek_background_light">#90000000</color>
     <color name="seek_background_dark">#905B5B5B</color>
-    <color name="text_color_secondary_light">#444444</color>
-    <color name="text_color_secondary_dark">#cccccc</color>
-    <color name="color_surface_variant_light">#D3DCE0</color>
-    <color name="color_surface_variant_dark">#2F3B4F</color>
-    <color name="color_secondary_container_light">#C8D8DE</color>
-    <color name="color_secondary_container_dark">#3C4E68</color>
+    <color name="text_color_secondary_light">#3A3E48</color>
+    <color name="text_color_secondary_dark">#C8CAD1</color>
+    <color name="color_surface_variant_light">#DDD8CE</color>
+    <color name="color_surface_variant_dark">#2C303C</color>
+    <color name="color_secondary_container_light">#F6E3D4</color>
+    <color name="color_secondary_container_dark">#4A301C</color>
 
-    <color name="aftercast_icon_background">#006675</color>
+    <color name="ink">#12141B</color>
+    <color name="copper">#EE9A5B</color>
+    <color name="copper_on_light">#D9783A</color>
+    <color name="primary_container_light">#D4F3FA</color>
+    <color name="primary_container_dark">#0E3E4C</color>
+    <color name="on_primary_container_dark">#D7F6FC</color>
+    <color name="aftercast_icon_background">#009EC5</color>
     <color name="ic_launcher_teal_bg">#007FA2</color>
     <color name="ic_launcher_ember_bg">#2C2219</color>
     <color name="ic_launcher_navy_bg">#021639</color>
@@ -34,11 +40,11 @@
     <color name="aftercast_icon_paper">#F3EDE4</color>
     <color name="aftercast_icon_spine">#E4DDD2</color>
     <color name="aftercast_icon_ink">#143028</color>
-    <color name="accent_light">#0078C2</color>
-    <color name="accent_dark">#3D8BFF</color>
+    <color name="accent_light">#007FA2</color>
+    <color name="accent_dark">#22B4D8</color>
 
-    <color name="gradient_000">#364ff3</color>
-    <color name="gradient_025">#2E6FF6</color>
-    <color name="gradient_075">#1EB0FC</color>
-    <color name="gradient_100">#16d0ff</color>
+    <color name="gradient_000">#00607D</color>
+    <color name="gradient_025">#007FA2</color>
+    <color name="gradient_075">#009EC5</color>
+    <color name="gradient_100">#22B4D8</color>
 </resources>

@@ -1,38 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="TextAppearance.Aftercast.HomeTitle" parent="TextAppearance.Material3.TitleLarge">
-        <item name="android:fontFamily">@font/newsreader</item>
-        <item name="fontFamily">@font/newsreader</item>
+        <item name="android:fontFamily">@font/geist_medium</item>
+        <item name="fontFamily">@font/geist_medium</item>
         <item name="android:textSize">28sp</item>
-        <item name="android:fontVariationSettings">\'opsz\' 36, \'wght\' 560</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:letterSpacing">0</item>
     </style>
 
     <style name="TextAppearance.Aftercast.HomeTagline" parent="TextAppearance.Material3.BodyLarge">
-        <item name="android:fontFamily">@font/newsreader_italic</item>
-        <item name="fontFamily">@font/newsreader_italic</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:fontVariationSettings">\'opsz\' 16, \'wght\' 400</item>
+        <item name="android:fontFamily">@font/geist_mono</item>
+        <item name="fontFamily">@font/geist_mono</item>
+        <item name="android:textSize">15sp</item>
         <item name="android:includeFontPadding">false</item>
-        <item name="android:letterSpacing">0</item>
+        <item name="android:letterSpacing">0.01</item>
     </style>
 
     <style name="TextAppearance.Aftercast.Transcript" parent="TextAppearance.Material3.BodyLarge">
-        <item name="android:fontFamily">@font/newsreader</item>
-        <item name="fontFamily">@font/newsreader</item>
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="fontFamily">@font/inter</item>
         <item name="android:textSize">21sp</item>
-        <item name="android:fontVariationSettings">\'opsz\' 21, \'wght\' 480</item>
         <item name="android:letterSpacing">0.01</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
     <style name="TextAppearance.Aftercast.TranscriptMeta" parent="TextAppearance.Material3.BodySmall">
-        <item name="android:fontFamily">@font/newsreader_italic</item>
-        <item name="fontFamily">@font/newsreader_italic</item>
+        <item name="android:fontFamily">@font/geist_mono</item>
+        <item name="fontFamily">@font/geist_mono</item>
         <item name="android:textSize">13sp</item>
-        <item name="android:fontVariationSettings">\'opsz\' 14, \'wght\' 520</item>
-        <item name="android:letterSpacing">0.015</item>
+        <item name="android:letterSpacing">0.02</item>
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 </resources>

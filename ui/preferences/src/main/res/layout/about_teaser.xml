@@ -26,7 +26,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="2dp"
+        android:text="@string/studio_credit"
+        android:textAppearance="@style/TextAppearance.Aftercast.Studio" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="@string/tagline"
         android:textAppearance="?attr/textAppearanceBodyLarge" />
 

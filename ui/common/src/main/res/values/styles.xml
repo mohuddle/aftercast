@@ -22,10 +22,27 @@
         <item name="dragview_background">@drawable/ic_drag_lighttheme</item>
         <item name="scrollbar_thumb">@drawable/scrollbar_thumb_light</item>
         <item name="icon_red">#CF1800</item>
-        <item name="icon_yellow">#F59F00</item>
+        <item name="icon_yellow">@color/copper_on_light</item>
         <item name="icon_green">#008537</item>
         <item name="icon_purple">#5F1984</item>
         <item name="icon_gray">#25365A</item>
+        <item name="android:fontFamily">@font/geist</item>
+        <item name="fontFamily">@font/geist</item>
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.Aftercast.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.Aftercast.DisplayMedium</item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.Aftercast.DisplaySmall</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.Aftercast.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.Aftercast.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.Aftercast.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.Aftercast.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.Aftercast.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.Aftercast.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.Aftercast.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.Aftercast.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.Aftercast.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.Aftercast.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.Aftercast.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.Aftercast.LabelSmall</item>
         <item name="android:splitMotionEvents">false</item>
         <item name="android:fitsSystemWindows">false</item>
         <item name="android:windowContentTransitions">true</item>
@@ -39,18 +56,18 @@
         <item name="colorPrimary">@color/accent_light</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorAccent">@color/accent_light</item>
-        <item name="colorSecondary">@color/accent_light</item>
-        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondary">@color/copper_on_light</item>
+        <item name="colorOnSecondary">@color/ink</item>
         <item name="colorPrimaryDark">@color/accent_light</item>
-        <item name="colorPrimaryContainer">#D6E6F3</item>
-        <item name="colorOnPrimaryContainer">@color/black</item>
+        <item name="colorPrimaryContainer">@color/primary_container_light</item>
+        <item name="colorOnPrimaryContainer">@color/ink</item>
         <item name="android:colorBackground">@color/background_light</item>
         <item name="colorSurface">@color/background_light</item>
         <item name="colorOnSurface">@color/black</item>
         <item name="colorOnContainer">@color/black</item>
         <item name="colorSurfaceVariant">@color/color_surface_variant_light</item>
         <item name="colorOnSurfaceVariant">@color/text_color_secondary_light</item>
-        <item name="colorSurfaceContainer">#EBEEF3</item>
+        <item name="colorSurfaceContainer">@color/background_elevated_light</item>
         <item name="colorSecondaryContainer">@color/color_secondary_container_light</item>
         <item name="colorOnSecondaryContainer">@color/black</item>
         <item name="android:textColorPrimary">@color/black</item>
@@ -79,10 +96,27 @@
         <item name="dragview_background">@drawable/ic_drag_darktheme</item>
         <item name="scrollbar_thumb">@drawable/scrollbar_thumb_dark</item>
         <item name="icon_red">#CF1800</item>
-        <item name="icon_yellow">#F59F00</item>
+        <item name="icon_yellow">@color/copper</item>
         <item name="icon_green">#008537</item>
         <item name="icon_purple">#AA55D8</item>
         <item name="icon_gray">#CDD9E4</item>
+        <item name="android:fontFamily">@font/geist</item>
+        <item name="fontFamily">@font/geist</item>
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.Aftercast.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.Aftercast.DisplayMedium</item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.Aftercast.DisplaySmall</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.Aftercast.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.Aftercast.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.Aftercast.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.Aftercast.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.Aftercast.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.Aftercast.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.Aftercast.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.Aftercast.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.Aftercast.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.Aftercast.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.Aftercast.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.Aftercast.LabelSmall</item>
         <item name="android:splitMotionEvents">false</item>
         <item name="android:fitsSystemWindows">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
@@ -96,20 +130,20 @@
     <style name="Theme.AntennaPod.Dark" parent="Theme.AntennaPod.Dynamic.Dark">
         <item name="isMaterial3DynamicColorApplied">false</item>
         <item name="colorPrimary">@color/accent_dark</item>
-        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorOnPrimary">@color/ink</item>
         <item name="colorAccent">@color/accent_dark</item>
-        <item name="colorSecondary">@color/accent_dark</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorSecondary">@color/copper</item>
+        <item name="colorOnSecondary">@color/ink</item>
         <item name="colorPrimaryDark">@color/accent_dark</item>
-        <item name="colorPrimaryContainer">#29374E</item>
-        <item name="colorOnPrimaryContainer">@color/white</item>
+        <item name="colorPrimaryContainer">@color/primary_container_dark</item>
+        <item name="colorOnPrimaryContainer">@color/on_primary_container_dark</item>
         <item name="android:colorBackground">@color/background_darktheme</item>
         <item name="colorSurface">@color/background_darktheme</item>
         <item name="colorOnSurface">@color/white</item>
         <item name="colorOnContainer">@color/white</item>
         <item name="colorSurfaceVariant">@color/color_surface_variant_dark</item>
         <item name="colorOnSurfaceVariant">@color/text_color_secondary_dark</item>
-        <item name="colorSurfaceContainer">#1C2024</item>
+        <item name="colorSurfaceContainer">@color/background_elevated_darktheme</item>
         <item name="colorSecondaryContainer">@color/color_secondary_container_dark</item>
         <item name="colorOnSecondaryContainer">@color/white</item>
         <item name="android:textColorPrimary">@color/white</item>
@@ -139,7 +173,7 @@
         <item name="colorSurface">@color/black</item>
         <item name="background_color">@color/black</item>
         <item name="background_elevated">@color/black</item>
-        <item name="colorPrimaryContainer">#0D182B</item>
+        <item name="colorPrimaryContainer">#071820</item>
         <item name="colorOnPrimaryContainer">@color/white</item>
     </style>
 
@@ -253,7 +287,7 @@
         <item name="android:windowTranslucentNavigation">false</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:enforceNavigationBarContrast" tools:targetApi="q">false</item>
-        <item name="windowSplashScreenBackground">#009EC5</item>
+        <item name="windowSplashScreenBackground">@color/aftercast_icon_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/launcher_animate</item>
         <item name="windowSplashScreenIconBackgroundColor">@color/aftercast_icon_background</item>
     </style>
@@ -275,10 +309,79 @@
         <item name="colorControlNormal">?attr/colorOnSurface</item>
     </style>
 
+    <style name="TextAppearance.Aftercast.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:fontFamily">@font/geist_medium</item>
+        <item name="fontFamily">@font/geist_medium</item>
+    </style>
+    <style name="TextAppearance.Aftercast.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="android:fontFamily">@font/geist_medium</item>
+        <item name="fontFamily">@font/geist_medium</item>
+    </style>
+    <style name="TextAppearance.Aftercast.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:fontFamily">@font/geist_medium</item>
+        <item name="fontFamily">@font/geist_medium</item>
+    </style>
+    <style name="TextAppearance.Aftercast.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:fontFamily">@font/geist_medium</item>
+        <item name="fontFamily">@font/geist_medium</item>
+    </style>
+    <style name="TextAppearance.Aftercast.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">@font/geist_medium</item>
+        <item name="fontFamily">@font/geist_medium</item>
+    </style>
+    <style name="TextAppearance.Aftercast.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">@font/geist_medium</item>
+        <item name="fontFamily">@font/geist_medium</item>
+    </style>
+    <style name="TextAppearance.Aftercast.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/geist_medium</item>
+        <item name="fontFamily">@font/geist_medium</item>
+    </style>
+    <style name="TextAppearance.Aftercast.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">@font/geist_medium</item>
+        <item name="fontFamily">@font/geist_medium</item>
+    </style>
+    <style name="TextAppearance.Aftercast.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:fontFamily">@font/geist_medium</item>
+        <item name="fontFamily">@font/geist_medium</item>
+    </style>
+    <style name="TextAppearance.Aftercast.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">@font/geist</item>
+        <item name="fontFamily">@font/geist</item>
+    </style>
+    <style name="TextAppearance.Aftercast.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/geist</item>
+        <item name="fontFamily">@font/geist</item>
+    </style>
+    <style name="TextAppearance.Aftercast.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:fontFamily">@font/geist</item>
+        <item name="fontFamily">@font/geist</item>
+    </style>
+    <style name="TextAppearance.Aftercast.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/geist_mono</item>
+        <item name="fontFamily">@font/geist_mono</item>
+    </style>
+    <style name="TextAppearance.Aftercast.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">@font/geist_mono</item>
+        <item name="fontFamily">@font/geist_mono</item>
+    </style>
+    <style name="TextAppearance.Aftercast.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/geist_mono</item>
+        <item name="fontFamily">@font/geist_mono</item>
+    </style>
+    <style name="TextAppearance.Aftercast.Studio" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/geist_mono</item>
+        <item name="fontFamily">@font/geist_mono</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+    </style>
+
     <style name="AntennaPod.TextView.Heading" parent="@android:style/TextAppearance.Medium">
         <item name="android:textSize">@dimen/text_size_large</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
-        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:fontFamily">@font/geist</item>
+        <item name="fontFamily">@font/geist</item>
     </style>
 
     <style name="AntennaPod.TextView.ListItemPrimaryTitle" parent="@style/TextAppearance.Material3.BodyLarge">

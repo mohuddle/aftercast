@@ -148,7 +148,7 @@ Other notices:
 
 - sherpa-onnx 1.13.8 is Apache-2.0. The Android library is vendored in this tree because upstream gitignore skips `libs/`.
 - The Whisper weights are not in this repository. They download at runtime. The original OpenAI Whisper model is MIT.
-- The Newsreader typeface is SIL Open Font License 1.1. The credit file is `ui/preferences/src/main/assets/LICENSE_NEWSREADER.txt`.
+- Geist, Geist Mono, and Inter are SIL Open Font License 1.1. The credit files are `ui/preferences/src/main/assets/LICENSE_GEIST.txt` and `LICENSE_INTER.txt`.
 
 The Java package namespace in this tree is still `de.danoeh.antennapod`. The installable application id is `app.aftercast`.
 

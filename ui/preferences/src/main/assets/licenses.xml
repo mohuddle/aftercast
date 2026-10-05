@@ -7,11 +7,17 @@
         license="GPL-3.0"
         licenseText="LICENSE.txt" />
     <library
-        name="Newsreader"
-        author="Production Type"
-        website="https://fonts.google.com/specimen/Newsreader"
+        name="Geist and Geist Mono"
+        author="The Geist Project Authors"
+        website="https://github.com/vercel/geist-font"
         license="SIL Open Font License 1.1"
-        licenseText="LICENSE_NEWSREADER.txt" />
+        licenseText="LICENSE_GEIST.txt" />
+    <library
+        name="Inter"
+        author="The Inter Project Authors"
+        website="https://github.com/rsms/inter"
+        license="SIL Open Font License 1.1"
+        licenseText="LICENSE_INTER.txt" />
     <library
         name="Android Jetpack"
         author="Google"
