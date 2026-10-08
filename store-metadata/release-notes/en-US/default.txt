@@ -1,0 +1,1 @@
+Up Next covers now fill the card, and Settings no longer shows a package-name notice.
