@@ -10,7 +10,7 @@
     android:layout_marginBottom="10dp"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="?attr/colorSurfaceContainer"
+    app:cardBackgroundColor="#FF2A2826"
     app:cardCornerRadius="20dp"
     app:cardElevation="3dp"
     app:strokeColor="?attr/colorOutlineVariant"
@@ -22,33 +22,35 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <FrameLayout
+        <de.danoeh.antennapod.ui.screen.home.sections.UpNextCoverFrame
+            android:id="@+id/coverFrame"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/cover"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
+                android:layout_width="1dp"
+                android:layout_height="1dp"
+                android:layout_gravity="top|center_horizontal"
+                android:scaleType="fitCenter"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
                 tools:src="@tools:sample/backgrounds/scenic" />
 
             <ImageView
                 android:id="@+id/playButton"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_gravity="bottom|end"
-                android:layout_margin="16dp"
+                android:layout_margin="8dp"
                 android:background="@drawable/bg_circle"
                 android:clickable="true"
                 android:contentDescription="@string/play_label"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:padding="16dp"
+                android:padding="8dp"
                 app:srcCompat="@drawable/ic_play_24dp"
                 app:tint="?attr/colorOnPrimary" />
-        </FrameLayout>
+        </de.danoeh.antennapod.ui.screen.home.sections.UpNextCoverFrame>
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progressBar"
@@ -66,11 +68,9 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:paddingStart="16dp"
             android:paddingTop="12dp"
-            android:paddingEnd="16dp"
             android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-            android:textColor="?android:attr/textColorPrimary"
+            android:textColor="#F7F4EE"
             tools:text="Episode title" />
 
         <TextView
@@ -79,12 +79,10 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:paddingStart="16dp"
             android:paddingTop="2dp"
-            android:paddingEnd="16dp"
             android:paddingBottom="6dp"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:textColor="?android:attr/textColorSecondary"
+            android:textColor="#D9F7F4EE"
             tools:text="Show name" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

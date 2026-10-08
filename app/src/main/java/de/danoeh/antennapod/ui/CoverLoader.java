@@ -21,6 +21,10 @@ public class CoverLoader {
     private ImageView imgvCover;
     private boolean textAndImageCombined;
     private TextView fallbackTitle;
+    @Nullable private CoverReadyListener readyListener;
+    @Nullable private Object expectedTag;
+    private int overrideWidth;
+    private int overrideHeight;
 
     public CoverLoader() {
     }
@@ -45,6 +49,25 @@ public class CoverLoader {
         return this;
     }
 
+    /** Called with the drawable that was set on the cover, after a stale load has been ignored. */
+    public CoverLoader withReadyListener(CoverReadyListener listener) {
+        readyListener = listener;
+        return this;
+    }
+
+    /** Ignore a load that finishes after the view has been bound to a different item. */
+    public CoverLoader expectTag(Object tag) {
+        expectedTag = tag;
+        return this;
+    }
+
+    /** Decode at this pixel size instead of the view's current measured size. */
+    public CoverLoader withOverride(int width, int height) {
+        overrideWidth = width;
+        overrideHeight = height;
+        return this;
+    }
+
     public CoverLoader withPlaceholderView(TextView title) {
         this.fallbackTitle = title;
         return this;
@@ -63,7 +86,8 @@ public class CoverLoader {
     }
 
     public void load() {
-        CoverTarget coverTarget = new CoverTarget(fallbackTitle, imgvCover, textAndImageCombined);
+        CoverTarget coverTarget = new CoverTarget(
+                fallbackTitle, imgvCover, textAndImageCombined, readyListener, expectedTag);
 
         if (resource != 0) {
             Glide.with(imgvCover).clear(coverTarget);
@@ -75,6 +99,9 @@ public class CoverLoader {
         RequestOptions options = new RequestOptions()
                 .fitCenter()
                 .dontAnimate();
+        if (overrideWidth > 0 && overrideHeight > 0) {
+            options = options.override(overrideWidth, overrideHeight);
+        }
 
         RequestBuilder<Drawable> builder = Glide.with(imgvCover)
                 .as(Drawable.class)
@@ -91,16 +118,25 @@ public class CoverLoader {
         builder.into(coverTarget);
     }
 
+    public interface CoverReadyListener {
+        void onCoverReady(@NonNull Drawable drawable);
+    }
+
     static class CoverTarget extends CustomViewTarget<ImageView, Drawable> {
         private final WeakReference<TextView> fallbackTitle;
         private final WeakReference<ImageView> cover;
         private final boolean textAndImageCombined;
+        @Nullable private final CoverReadyListener readyListener;
+        @Nullable private final Object expectedTag;
 
-        public CoverTarget(TextView fallbackTitle, ImageView coverImage, boolean textAndImageCombined) {
+        public CoverTarget(TextView fallbackTitle, ImageView coverImage, boolean textAndImageCombined,
+                           @Nullable CoverReadyListener readyListener, @Nullable Object expectedTag) {
             super(coverImage);
             this.fallbackTitle = new WeakReference<>(fallbackTitle);
             this.cover = new WeakReference<>(coverImage);
             this.textAndImageCombined = textAndImageCombined;
+            this.readyListener = readyListener;
+            this.expectedTag = expectedTag;
         }
 
         @Override
@@ -112,8 +148,14 @@ public class CoverLoader {
         public void onResourceReady(@NonNull Drawable resource,
                                     @Nullable Transition<? super Drawable> transition) {
             ImageView ivCover = cover.get();
+            if (ivCover == null || (expectedTag != null && !expectedTag.equals(ivCover.getTag()))) {
+                return;
+            }
             ivCover.setImageDrawable(resource);
             setTitleVisibility(fallbackTitle.get(), textAndImageCombined);
+            if (readyListener != null) {
+                readyListener.onCoverReady(resource);
+            }
         }
 
         @Override

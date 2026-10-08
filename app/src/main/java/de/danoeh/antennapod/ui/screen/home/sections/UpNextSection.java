@@ -1,5 +1,8 @@
 package de.danoeh.antennapod.ui.screen.home.sections;
 
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +31,7 @@ import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.playback.service.PlaybackStatus;
 import de.danoeh.antennapod.storage.database.DBReader;
 import de.danoeh.antennapod.storage.preferences.UserPreferences;
+import androidx.palette.graphics.Palette;
 import de.danoeh.antennapod.ui.CoverLoader;
 import de.danoeh.antennapod.ui.common.ThemeUtils;
 import de.danoeh.antennapod.ui.episodes.ImageResourceUtils;
@@ -197,7 +201,8 @@ public class UpNextSection extends HomeSection {
     }
 
     /**
-     * Leaves just the next section's title in view, so Continue listening peeks above the fold.
+     * Sizes the row to the cover, the action button, and the title.
+     * On a short screen the row stops above the bottom navigation.
      */
     private void sizeScrollerToLeaveAPeek() {
         if (viewBinding == null || !isAdded()) {
@@ -218,7 +223,14 @@ public class UpNextSection extends HomeSection {
         }
         float density = getResources().getDisplayMetrics().density;
         int peek = (int) (44 * density);
-        int height = bottomLimit - location[1] - peek;
+        int available = bottomLimit - location[1] - peek;
+        int parentWidth = viewBinding.recyclerView.getWidth();
+        if (parentWidth <= 0) {
+            parentWidth = getResources().getDisplayMetrics().widthPixels;
+        }
+        int preferred = UpNextCover.rowHeight(parentWidth, density,
+                getResources().getConfiguration().fontScale);
+        int height = Math.min(available, preferred);
         int min = (int) (160 * density);
         if (height < min) {
             height = min;
@@ -262,7 +274,7 @@ public class UpNextSection extends HomeSection {
             if (width <= 0) {
                 width = parent.getResources().getDisplayMetrics().widthPixels;
             }
-            width = (int) (width * 0.72f);
+            width = (int) (width * UpNextCover.CARD_WIDTH_FRACTION);
             int gap = (int) (10 * parent.getResources().getDisplayMetrics().density);
             RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(
                     width, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -297,6 +309,8 @@ public class UpNextSection extends HomeSection {
 
         @Override
         public void onViewRecycled(@NonNull UpNextHolder holder) {
+            holder.boundItemId = -1;
+            holder.binding.coverFrame.setOnCoverSizedListener(null);
             holder.binding.card.setOnClickListener(null);
             holder.binding.card.setOnLongClickListener(null);
             holder.binding.card.setOnCreateContextMenuListener(null);
@@ -306,6 +320,11 @@ public class UpNextSection extends HomeSection {
 
     private final class UpNextHolder extends RecyclerView.ViewHolder {
         final UpNextCardBinding binding;
+        long boundItemId = -1;
+        long loadedItemId = -1;
+        int loadedSize = -1;
+        String pendingCoverUri;
+        String pendingFeedImage;
 
         UpNextHolder(UpNextCardBinding binding) {
             super(binding.getRoot());
@@ -314,22 +333,28 @@ public class UpNextSection extends HomeSection {
 
         void bind(FeedItem item) {
             Feed feed = item.getFeed();
+            boundItemId = item.getId();
+            loadedItemId = -1;
+            binding.cover.setTag(Long.valueOf(boundItemId));
             binding.showLabel.setText(feed == null ? "" : feed.getTitle());
             binding.titleLabel.setText(item.getTitle());
-            String feedImage = feed == null ? null : feed.getImageUrl();
-            new CoverLoader()
-                    .withUri(ImageResourceUtils.getEpisodeListImageLocation(item))
-                    .withFallbackUri(feedImage)
-                    .withCoverView(binding.cover)
-                    .load();
+            binding.titleLabel.setTextColor(UpNextCover.TITLE_COLOR);
+            binding.showLabel.setTextColor(UpNextCover.SHOW_COLOR);
+            binding.card.setCardBackgroundColor(UpNextCover.FALLBACK_COLOR);
+            binding.cover.setImageDrawable(null);
+            pendingFeedImage = feed == null ? null : feed.getImageUrl();
+            pendingCoverUri = ImageResourceUtils.getEpisodeListImageLocation(item);
 
             FeedMedia media = item.getMedia();
-            int background = R.attr.colorSurfaceContainer;
-            if (media != null && PlaybackStatus.isCurrentlyPlaying(media)) {
-                background = R.attr.colorSecondaryContainer;
-            }
-            binding.card.setCardBackgroundColor(ThemeUtils.getColorFromAttr(adapter.activity, background));
+            boolean playing = media != null && PlaybackStatus.isCurrentlyPlaying(media);
+            int stroke = ThemeUtils.getColorFromAttr(adapter.activity,
+                    playing ? R.attr.colorPrimary : R.attr.colorOutlineVariant);
+            binding.card.setStrokeColor(ColorStateList.valueOf(stroke));
+            binding.card.setStrokeWidth((int) ((playing ? 2f : 1f) * density()));
 
+            int indicator = ThemeUtils.getColorFromAttr(adapter.activity, R.attr.colorPrimary);
+            binding.progressBar.setIndicatorColor(indicator);
+            binding.progressBar.setTrackColor(0x33FFFFFF);
             if (media != null && media.getDuration() > 0 && media.getPosition() > 0) {
                 int percent = (int) (100f * media.getPosition() / media.getDuration());
                 binding.progressBar.setVisibility(View.VISIBLE);
@@ -346,6 +371,46 @@ public class UpNextSection extends HomeSection {
                 ItemActionButton.forItem(item).configure(playButton, playButton, adapter.activity);
                 playButton.setFocusable(false);
             }
+            binding.coverFrame.setOnCoverSizedListener(this::loadCover);
+            binding.coverFrame.ensureCoverPlaced();
+        }
+
+        private void loadCover(int size) {
+            if (loadedItemId == boundItemId && loadedSize == size) {
+                return;
+            }
+            loadedItemId = boundItemId;
+            loadedSize = size;
+            long itemId = boundItemId;
+            new CoverLoader()
+                    .withUri(pendingCoverUri)
+                    .withFallbackUri(pendingFeedImage)
+                    .withCoverView(binding.cover)
+                    .withOverride(size, size)
+                    .expectTag(Long.valueOf(itemId))
+                    .withReadyListener(drawable -> applyCoverColor(itemId, drawable))
+                    .load();
+        }
+
+        private void applyCoverColor(long itemId, Drawable drawable) {
+            if (boundItemId != itemId) {
+                return;
+            }
+            Bitmap bitmap = UpNextCover.softwareBitmap(drawable);
+            if (bitmap == null) {
+                return;
+            }
+            Palette.from(bitmap).clearFilters().generate(palette -> {
+                if (boundItemId != itemId || palette == null) {
+                    return;
+                }
+                binding.card.setCardBackgroundColor(
+                        UpNextCover.cardColor(palette, UpNextCover.FALLBACK_COLOR));
+            });
+        }
+
+        private float density() {
+            return binding.getRoot().getResources().getDisplayMetrics().density;
         }
     }
 }
