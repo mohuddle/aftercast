@@ -1,7 +1,6 @@
 package de.danoeh.antennapod.ui.screen.preferences;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -112,7 +111,7 @@ public class PreferenceActivity extends ToolbarActivity implements SearchPrefere
 
     public PreferenceFragmentCompat openScreen(int screen) {
         PreferenceFragmentCompat fragment = getPreferenceScreen(screen);
-        if (screen == R.xml.preferences_notifications && Build.VERSION.SDK_INT >= 26) {
+        if (screen == R.xml.preferences_notifications) {
             Intent intent = new Intent();
             intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
             intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());

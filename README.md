@@ -7,7 +7,7 @@
 > A [Mobitecture](https://github.com/mohuddle) app · *apps, architected.*
 
 [![License](https://img.shields.io/badge/License-GPL--3.0-22c55e?style=for-the-badge)](LICENSE)
-[![Android](https://img.shields.io/badge/Android-6.0%2B-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com/about/versions/marshmallow)
+[![Android](https://img.shields.io/badge/Android-8.0%2B-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com/about/versions/oreo)
 [![API](https://img.shields.io/badge/Target%20API-36-3DDC84?style=for-the-badge)](https://developer.android.com/about/versions)
 [![ABI](https://img.shields.io/badge/ABI-arm64--v8a-555555?style=for-the-badge)](app/build.gradle)
 [![Privacy](https://img.shields.io/badge/Privacy-on--device%20transcription-black?style=for-the-badge)](PRIVACY.md)
@@ -103,7 +103,7 @@ Bug reports and pull requests belong in this repository. See [CONTRIBUTING.md](C
 
 ## 🛠️ Technical Specifications
 
-- **Minimum Android version**: Android 6.0 (API 23). Phones from about the last five years are the intended fit for transcription.
+- **Minimum Android version**: Android 8.0 (API 26). Phones from about the last five years are the intended fit for transcription.
 - **Target Android version**: Android 16 (API 36)
 - **Version**: 0.1.12 (versionCode 3120303)
 - **Application id**: `app.aftercast`
@@ -126,6 +126,7 @@ A 50-minute episode can take longer than the episode itself on an older phone. L
 The full policy is [PRIVACY.md](PRIVACY.md).
 
 - Aftercast has no account, shows no ads, and includes no analytics or crash-reporting service.
+- The Play build uses Google Play services for Chromecast and Wear OS. Google may collect usage or diagnostic data through those components under [Google's privacy policy](https://policies.google.com/privacy). Aftercast does not receive that data. The free build does not include Google Play services.
 - Subscriptions, episode files, playback position, settings, and transcripts stay on the phone.
 - Transcription reads the downloaded audio on the phone. That audio is not part of any request.
 - The speech-model download is a file request to Hugging Face. Hugging Face can see the requesting IP address.

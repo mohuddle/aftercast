@@ -667,10 +667,7 @@ public abstract class UserPreferences {
     }
 
     public static boolean gpodnetNotificationsEnabled() {
-        if (Build.VERSION.SDK_INT >= 26) {
-            return true; // System handles notification preferences
-        }
-        return prefs.getBoolean(PREF_GPODNET_NOTIFICATIONS, true);
+        return true;
     }
 
     /**

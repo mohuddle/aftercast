@@ -630,30 +630,16 @@ public class PlaybackService extends MediaBrowserServiceCompat {
         Intent intentAllowThisTime = new Intent(originalIntent);
         intentAllowThisTime.setAction(PlaybackServiceInterface.EXTRA_ALLOW_STREAM_THIS_TIME);
         intentAllowThisTime.putExtra(PlaybackServiceInterface.EXTRA_ALLOW_STREAM_THIS_TIME, true);
-        PendingIntent pendingIntentAllowThisTime;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            pendingIntentAllowThisTime = PendingIntent.getForegroundService(this,
-                    R.id.pending_intent_allow_stream_this_time, intentAllowThisTime,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        } else {
-            pendingIntentAllowThisTime = PendingIntent.getService(this,
-                    R.id.pending_intent_allow_stream_this_time, intentAllowThisTime,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        }
+        PendingIntent pendingIntentAllowThisTime = PendingIntent.getForegroundService(this,
+                R.id.pending_intent_allow_stream_this_time, intentAllowThisTime,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         Intent intentAlwaysAllow = new Intent(intentAllowThisTime);
         intentAlwaysAllow.setAction(PlaybackServiceInterface.EXTRA_ALLOW_STREAM_ALWAYS);
         intentAlwaysAllow.putExtra(PlaybackServiceInterface.EXTRA_ALLOW_STREAM_ALWAYS, true);
-        PendingIntent pendingIntentAlwaysAllow;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            pendingIntentAlwaysAllow = PendingIntent.getForegroundService(this,
-                    R.id.pending_intent_allow_stream_always, intentAlwaysAllow,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        } else {
-            pendingIntentAlwaysAllow = PendingIntent.getService(this,
-                    R.id.pending_intent_allow_stream_always, intentAlwaysAllow,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        }
+        PendingIntent pendingIntentAlwaysAllow = PendingIntent.getForegroundService(this,
+                R.id.pending_intent_allow_stream_always, intentAlwaysAllow,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
                 NotificationUtils.CHANNEL_ID_USER_ACTION)
@@ -921,13 +907,11 @@ public class PlaybackService extends MediaBrowserServiceCompat {
                     break;
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                try {
-                    TileService.requestListeningState(getApplicationContext(),
-                            new ComponentName(getApplicationContext(), QuickSettingsTileService.class));
-                } catch (IllegalArgumentException e) {
-                    Log.d(TAG, "Skipping quick settings tile setup");
-                }
+            try {
+                TileService.requestListeningState(getApplicationContext(),
+                        new ComponentName(getApplicationContext(), QuickSettingsTileService.class));
+            } catch (IllegalArgumentException e) {
+                Log.d(TAG, "Skipping quick settings tile setup");
             }
 
             IntentUtils.sendLocalBroadcast(getApplicationContext(), ACTION_PLAYER_STATUS_CHANGED);

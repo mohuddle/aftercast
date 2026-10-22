@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
@@ -106,12 +105,10 @@ public class WidgetConfigActivity extends ToolbarActivity {
         ckFastForward.setChecked(prefs.getBoolean(PlayerWidget.KEY_WIDGET_FAST_FORWARD + appWidgetId, false));
         ckSkip.setChecked(prefs.getBoolean(PlayerWidget.KEY_WIDGET_SKIP + appWidgetId, false));
         ckCoverAsBcg.setChecked(prefs.getBoolean(PlayerWidget.KEY_WIDGET_COVER_BACKGROUND + appWidgetId, false));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            int color = prefs.getInt(PlayerWidget.KEY_WIDGET_COLOR + appWidgetId, PlayerWidget.DEFAULT_COLOR);
-            int opacity = Color.alpha(color) * 100 / 0xFF;
+        int color = prefs.getInt(PlayerWidget.KEY_WIDGET_COLOR + appWidgetId, PlayerWidget.DEFAULT_COLOR);
+        int opacity = Color.alpha(color) * 100 / 0xFF;
 
-            opacitySeekBar.setProgress(opacity, false);
-        }
+        opacitySeekBar.setProgress(opacity, false);
         displayPreviewPanel();
     }
 

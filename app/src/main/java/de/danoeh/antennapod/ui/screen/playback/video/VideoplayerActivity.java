@@ -139,9 +139,6 @@ public class VideoplayerActivity extends CastEnabledActivity
     }
 
     void setupPip() {
-        if (Build.VERSION.SDK_INT < 26) {
-            return;
-        }
         PictureInPictureParams.Builder builder = new PictureInPictureParams.Builder();
         if (Build.VERSION.SDK_INT >= 31) {
             builder.setAutoEnterEnabled(true);
@@ -524,7 +521,7 @@ public class VideoplayerActivity extends CastEnabledActivity
     }
 
     private void compatEnterPictureInPicture() {
-        if (PictureInPictureUtil.supportsPictureInPicture(this) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (PictureInPictureUtil.supportsPictureInPicture(this)) {
             viewBinding.controlsView.hideControls(false);
             enterPictureInPictureMode();
         }

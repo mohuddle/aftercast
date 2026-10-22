@@ -105,7 +105,7 @@ public abstract class FeedDatabaseWriter {
                             savedFeed.getId(), Feed.FEEDFILETYPE_FEED, false,
                             DownloadError.ERROR_PARSER_EXCEPTION_DUPLICATE,
                             "The podcast host appears to have added the same episode twice. "
-                                    + "AntennaPod still refreshed the feed and attempted to repair it."
+                                    + "Aftercast still refreshed the feed and attempted to repair it."
                                     + "\n\nOriginal episode:\n" + duplicateEpisodeDetails(item)
                                     + "\n\nSecond episode that is also in the feed:\n"
                                     + duplicateEpisodeDetails(possibleDuplicate)));
@@ -121,7 +121,7 @@ public abstract class FeedDatabaseWriter {
                                 savedFeed.getId(), Feed.FEEDFILETYPE_FEED, false,
                                 DownloadError.ERROR_PARSER_EXCEPTION_DUPLICATE,
                                 "The podcast host changed the ID of an existing episode instead of just "
-                                        + "updating the episode itself. AntennaPod still refreshed the feed and "
+                                        + "updating the episode itself. Aftercast still refreshed the feed and "
                                         + "attempted to repair it."
                                         + "\n\nOriginal episode:\n" + duplicateEpisodeDetails(oldItem)
                                         + "\n\nNow the feed contains:\n" + duplicateEpisodeDetails(item)));

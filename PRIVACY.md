@@ -22,6 +22,14 @@ Synchronization is off until you turn it on and enter a server, username, and pa
 
 Sharing a podcast shares its title and feed address. It does not send the episode to Aftercast. There is no Aftercast server.
 
+## Google Play services
+
+Aftercast does not include an analytics service, and the developer does not receive usage or diagnostic data from Google.
+
+The Play build uses Google Play services for Chromecast (Google Cast) and for Wear OS. That build also uses Play services to update the device security provider. Google may collect some usage and diagnostic data through those components under [Google's privacy policy](https://policies.google.com/privacy).
+
+The free build does not include Google Play services, Chromecast, or Wear OS. It uses a bundled TLS provider instead. An F-Droid package of that free variant is the same in this respect. Both builds can show up in Android Auto as a media app through Android's media browser. That does not add Play services to the free build.
+
 ## Children
 
 Aftercast is not directed at children.

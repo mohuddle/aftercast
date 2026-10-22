@@ -47,7 +47,7 @@
     <string name="home_continue_title">Продължи да слушаш</string>
     <string name="home_new_title">Виж какво е ново</string>
     <string name="home_downloads_title">Управлявай изтеглените</string>
-    <string name="home_welcome_title">Добре дошли в AntennaPod!</string>
+    <string name="home_welcome_title">Добре дошли в Aftercast!</string>
     <string name="home_welcome_text">Все още не сте се абонирали към никакви подкасти. Отворете страничното менюто, за да добавите подкасти.</string>
     <string name="notification_permission_denied">Отхвърли разрешението.</string>
     <string name="configure_home">Настрой началния екран</string>
@@ -249,7 +249,7 @@
     <string name="local_folder">Локална папка</string>
     <string name="reconnect_local_folder">Свържи наново локална папка</string>
     <string name="reconnect_local_folder_warning">В случай на отхвърлени привилегии, можеш да използваш това, за да се свържеш наново към същата папка. Не избирай друга папка.</string>
-    <string name="local_feed_description">Този виртуален подкаст беше създаден чрез добавяне на папка към AntennaPod,</string>
+    <string name="local_feed_description">Този виртуален подкаст беше създаден чрез добавяне на папка към Aftercast,</string>
     <string name="unable_to_start_system_file_manager">Не беше възможно да стартираме системния файлов мениджър.</string>
     <string name="filter">Филтър</string>
     <string name="hide_is_favorite_label">Е в любими</string>
@@ -367,9 +367,9 @@
         <item quantity="other">%d епизоди добавени към любими.</item>
     </plurals>
     <string name="null_value_podcast_error">Този линк няма валиден подкаст URL. Моля потвърди линка и пробвай пак, или потърси подкаста ръчно.</string>
-    <string name="no_feed_url_podcast_found_by_search">Предложения подкаст няма RSS линк, но АнтенаПод намери един, който може да съвпада</string>
+    <string name="no_feed_url_podcast_found_by_search">Предложения подкаст няма RSS линк, но Aftercast намери един, който може да съвпада</string>
     <string name="confirm_mobile_download_dialog_title">Потвърди мобилно изтегляне</string>
-    <string name="confirm_mobile_download_dialog_message">Изтегляне на мобилно данни е спряно в настройките. АнтенаПод може да изтегли епизода после автоматично, когато има достъп до Wi-Fi.</string>
+    <string name="confirm_mobile_download_dialog_message">Изтегляне на мобилно данни е спряно в настройките. Aftercast може да изтегли епизода после автоматично, когато има достъп до Wi-Fi.</string>
     <string name="confirm_mobile_download_dialog_message_vpn">- Използвате VPN? Вашето VPN приложение се преструва на мобилна мрежа (връзка с измерване). Ако искате този проблем да бъде решен, свържете се със създателите на вашето VPN приложение.\n- Не използвате VPN? Отворете настройките за Wi-Fi на Android и променете типа на вашата Wi-Fi мрежа на „без измерване“.</string>
     <string name="confirm_mobile_streaming_notification_title">Потвърди мобилен стрийминг</string>
 </resources>

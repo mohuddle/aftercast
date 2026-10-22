@@ -102,6 +102,20 @@ public class UrlCheckerTest {
     }
 
     @Test
+    public void testAftercastSubscribeProtocolNoScheme() {
+        final String in = "aftercast-subscribe://example.com";
+        final String out = UrlChecker.prepareUrl(in);
+        assertEquals("http://example.com", out);
+    }
+
+    @Test
+    public void testAftercastSubscribeProtocolWithScheme() {
+        final String in = "aftercast-subscribe://https://example.com";
+        final String out = UrlChecker.prepareUrl(in);
+        assertEquals("https://example.com", out);
+    }
+
+    @Test
     public void testAntennaPodSubscribeDeeplink() throws UnsupportedEncodingException {
         final String feed = "http://example.org/podcast.rss";
         assertEquals(feed, UrlChecker.prepareUrl("https://antennapod.org/deeplink/subscribe?url=" + feed));
@@ -117,6 +131,8 @@ public class UrlCheckerTest {
         assertEquals(feed, UrlChecker.prepareUrl("https://antennapod.org/deeplink/subscribe?url=" + feed + "&title=a"));
         assertEquals(feed, UrlChecker.prepareUrl("https://antennapod.org/deeplink/subscribe?url="
                 + URLEncoder.encode(feed) + "&title=a"));
+        assertEquals(feed, UrlChecker.prepareUrl("https://mobitecture.dev/deeplink/subscribe?url=" + feed));
+        assertEquals(feed, UrlChecker.prepareUrl("https://www.mobitecture.dev/deeplink/subscribe?url=" + feed));
     }
 
     @Test
@@ -139,6 +155,14 @@ public class UrlCheckerTest {
     public void testProtocolRelativeUrlIsHttpsWithApSubscribeProtocol() {
         final String in = "//example.com";
         final String inBase = "antennapod-subscribe://https://examplebase.com";
+        final String out = UrlChecker.prepareUrl(in, inBase);
+        assertEquals("https://example.com", out);
+    }
+
+    @Test
+    public void testProtocolRelativeUrlIsHttpsWithAftercastSubscribeProtocol() {
+        final String in = "//example.com";
+        final String inBase = "aftercast-subscribe://https://examplebase.com";
         final String out = UrlChecker.prepareUrl(in, inBase);
         assertEquals("https://example.com", out);
     }

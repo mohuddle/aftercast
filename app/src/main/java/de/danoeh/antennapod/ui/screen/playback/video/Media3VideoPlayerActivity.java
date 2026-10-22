@@ -138,10 +138,6 @@ public class Media3VideoPlayerActivity extends AppCompatActivity implements Tool
     }
 
     private void setupPictureInPicture() {
-        if (Build.VERSION.SDK_INT < 26) {
-            return;
-        }
-
         PictureInPictureParams.Builder builder = new PictureInPictureParams.Builder();
 
         if (mediaController != null) {
@@ -168,8 +164,7 @@ public class Media3VideoPlayerActivity extends AppCompatActivity implements Tool
     @Override
     public void onUserLeaveHint() {
         super.onUserLeaveHint();
-        if (Build.VERSION.SDK_INT >= 26
-                && PictureInPictureUtil.supportsPictureInPicture(this)
+        if (PictureInPictureUtil.supportsPictureInPicture(this)
                 && !PictureInPictureUtil.isInPictureInPictureMode(this)) {
             viewBinding.controlsView.hideControls(false);
             enterPictureInPictureMode(new PictureInPictureParams.Builder().build());

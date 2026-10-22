@@ -33,7 +33,7 @@ import de.danoeh.antennapod.ui.preferences.R;
 import de.danoeh.antennapod.ui.preferences.databinding.BugReportFragmentBinding;
 
 /**
- * UI fragment to allow the user to submit a bug report via the AntennaPod forum or GitHub page.
+ * UI fragment to allow the user to submit a bug report via GitHub issues or discussions.
  */
 public class BugReportFragment extends AnimatedFragment {
 
@@ -85,7 +85,7 @@ public class BugReportFragment extends AnimatedFragment {
             }
         });
         viewBinding.openForumButton.setOnClickListener(v ->
-                IntentUtils.openInBrowser(requireContext(), "https://forum.antennapod.org/search"));
+                IntentUtils.openInBrowser(requireContext(), "https://github.com/mohuddle/aftercast/discussions"));
         viewBinding.openGithubButton.setOnClickListener(v ->
                 IntentUtils.openInBrowser(requireContext(), "https://github.com/mohuddle/aftercast/issues"));
         viewBinding.attribAppVersionLabel.setOnClickListener(v ->

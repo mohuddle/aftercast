@@ -78,7 +78,7 @@ public class MainPreferencesFragment extends AnimatedPreferenceFragment {
             return true;
         });
         findPreference(PREF_VIEW_FORUM).setOnPreferenceClickListener(preference -> {
-            IntentUtils.openInBrowser(getContext(), "https://github.com/mohuddle/aftercast/issues");
+            IntentUtils.openInBrowser(getContext(), "https://github.com/mohuddle/aftercast/discussions");
             return true;
         });
         findPreference(PREF_CONTRIBUTE).setOnPreferenceClickListener(preference -> {

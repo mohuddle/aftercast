@@ -28,7 +28,9 @@ public final class UrlChecker {
     private static final String TAG = "UrlChecker";
 
     private static final String AP_SUBSCRIBE = "antennapod-subscribe://";
+    private static final String AC_SUBSCRIBE = "aftercast-subscribe://";
     private static final String AP_SUBSCRIBE_DEEPLINK = "antennapod.org/deeplink/subscribe";
+    private static final String AC_SUBSCRIBE_DEEPLINK = "mobitecture.dev/deeplink/subscribe";
 
     /**
      * Checks if URL is valid and modifies it if necessary.
@@ -51,11 +53,12 @@ public final class UrlChecker {
         } else if (lowerCaseUrl.startsWith("itpc")) {
             Log.d(TAG, "Replacing itpc:// with http://");
             return prepareUrl(url.substring("itpc://".length()));
-        } else if (lowerCaseUrl.startsWith(AP_SUBSCRIBE)) {
-            Log.d(TAG, "Removing antennapod-subscribe://");
-            return prepareUrl(url.substring(AP_SUBSCRIBE.length()));
-        } else if (lowerCaseUrl.contains(AP_SUBSCRIBE_DEEPLINK)) {
-            Log.d(TAG, "Removing " + AP_SUBSCRIBE_DEEPLINK);
+        } else if (lowerCaseUrl.startsWith(AP_SUBSCRIBE) || lowerCaseUrl.startsWith(AC_SUBSCRIBE)) {
+            String prefix = lowerCaseUrl.startsWith(AC_SUBSCRIBE) ? AC_SUBSCRIBE : AP_SUBSCRIBE;
+            Log.d(TAG, "Removing " + prefix);
+            return prepareUrl(url.substring(prefix.length()));
+        } else if (containsSubscribeDeeplink(lowerCaseUrl)) {
+            Log.d(TAG, "Removing subscribe deeplink");
             String query = Uri.parse(url).getQueryParameter("url");
             try {
                 return prepareUrl(URLDecoder.decode(query, "UTF-8"));
@@ -73,8 +76,12 @@ public final class UrlChecker {
     }
 
     public static boolean isDeeplinkWithoutUrl(String url) {
-        return url.toLowerCase(Locale.ROOT).contains(AP_SUBSCRIBE_DEEPLINK)
+        return containsSubscribeDeeplink(url.toLowerCase(Locale.ROOT))
                 && Uri.parse(url).getQueryParameter("url") == null;
+    }
+
+    private static boolean containsSubscribeDeeplink(String lowerCaseUrl) {
+        return lowerCaseUrl.contains(AP_SUBSCRIBE_DEEPLINK) || lowerCaseUrl.contains(AC_SUBSCRIBE_DEEPLINK);
     }
 
     /**

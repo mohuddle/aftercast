@@ -1,7 +1,10 @@
 package de.danoeh.antennapod.ui.screen.rating;
 
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,15 +63,23 @@ public class RatingDialogFragment extends DialogFragment {
             dismiss();
         });
         viewBinding.rateButton.setOnClickListener(v -> {
-            IntentUtils.openInBrowser(getContext(),
-                    "https://play.google.com/store/apps/details?id=de.danoeh.antennapod");
+            openPlayListing();
             new RatingDialogManager(getActivity()).saveRated();
         });
         viewBinding.contibuteButton.setOnClickListener(v -> {
-            IntentUtils.openInBrowser(getContext(), "https://antennapod.org/contribute/");
+            IntentUtils.openInBrowser(getContext(), "https://github.com/mohuddle/aftercast");
             new RatingDialogManager(getActivity()).saveRated();
         });
         return viewBinding.getRoot();
+    }
+
+    private void openPlayListing() {
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=app.aftercast")));
+        } catch (ActivityNotFoundException e) {
+            IntentUtils.openInBrowser(getContext(),
+                    "https://play.google.com/store/apps/details?id=app.aftercast");
+        }
     }
 
     @Override
