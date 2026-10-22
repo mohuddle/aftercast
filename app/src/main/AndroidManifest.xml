@@ -190,6 +190,28 @@
                 <action android:name="de.danoeh.antennapod.intents.MAIN_ACTIVITY" />
                 <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES"/>
             </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="mobitecture.dev" />
+                <data android:host="www.mobitecture.dev" />
+                <data android:pathPrefix="/deeplink/main" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="mobitecture.dev" />
+                <data android:host="www.mobitecture.dev" />
+                <data android:pathPrefix="/deeplink/search" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -292,7 +314,20 @@
                 <data android:scheme="itpc"/>
                 <data android:scheme="pcast"/>
                 <data android:scheme="feed"/>
-                <data android:scheme="antennapod-subscribe"/>
+                <data android:scheme="aftercast-subscribe"/>
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="mobitecture.dev" />
+                <data android:host="www.mobitecture.dev" />
+                <data android:pathPrefix="/deeplink/subscribe" />
             </intent-filter>
 
             <intent-filter>
@@ -345,6 +380,11 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
         </provider>
+
+        <meta-data
+            tools:ignore="Deprecated"
+            android:name="com.google.android.actions"
+            android:resource="@xml/actions" />
 
     </application>
 

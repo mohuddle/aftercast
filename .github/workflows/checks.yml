@@ -110,7 +110,7 @@ jobs:
     strategy:
       matrix:
         version:
-          - api-level: 23
+          - api-level: 26
             target: default
           - api-level: 30
             target: aosp_atd

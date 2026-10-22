@@ -58,11 +58,7 @@ public class ShakeListener implements SensorEventListener {
 
         final int duration = 100;
         if (vibrator != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createOneShot(duration, 120));
-            } else {
-                vibrator.vibrate(duration);
-            }
+            vibrator.vibrate(VibrationEffect.createOneShot(duration, 120));
         }
     }
 

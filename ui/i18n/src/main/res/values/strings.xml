@@ -609,7 +609,7 @@
     <string name="enqueue_location_random">Random</string>
     <string name="pref_smart_mark_as_played_disabled">Disabled</string>
     <string name="documentation_support">Documentation &amp; support</string>
-    <string name="visit_user_forum">User forum</string>
+    <string name="visit_user_forum">Discussions</string>
     <string name="copy_to_clipboard">Copy to clipboard</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
     <string name="pref_proxy_title">Proxy</string>
@@ -647,14 +647,14 @@
 
     <!-- Report bug -->
     <string name="report_bug_title">Report bug</string>
-    <string name="report_bug_message">Sorry to hear something isn’t working. Report it on the Aftercast GitHub. If it is a general player issue, it may already be known on the AntennaPod forum.</string>
+    <string name="report_bug_message">Sorry to hear something isn’t working. Report it on the Aftercast GitHub, or ask in discussions.</string>
     <string name="report_bug_device_info_title">Device</string>
     <string name="report_bug_attrib_app_version">App version</string>
     <string name="report_bug_attrib_android_version">Android version</string>
     <string name="report_bug_attrib_device_name">Device Name</string>
     <string name="report_bug_crash_log_title">Crash log</string>
     <string name="report_bug_crash_log_message">Created: %1$s.</string>
-    <string name="report_bug_forum_title">Forum</string>
+    <string name="report_bug_forum_title">Discussions</string>
     <string name="report_bug_github_title">GitHub</string>
     <string name="pref_advanced">Advanced</string>
     <string name="pref_display">Display</string>
@@ -663,7 +663,7 @@
     <string name="about_pref">About</string>
     <string name="antennapod_version">Aftercast version</string>
     <string name="contributors">Contributors</string>
-    <string name="contributors_summary">Aftercast is based on AntennaPod. The people listed here built AntennaPod, with code, translations, or by helping users in the AntennaPod forum.</string>
+    <string name="contributors_summary">Aftercast is based on AntennaPod. The people listed here built AntennaPod, with code, translations, or by helping users.</string>
     <string name="developers">Developers</string>
     <string name="translators">Translators</string>
     <string name="special_thanks">Special thanks</string>
@@ -775,8 +775,8 @@
     <string name="synchronization_choose_title">Choose synchronization provider</string>
     <string name="synchronization_summary_unchoosen">You can choose from multiple providers to synchronize your subscriptions and episode play state with</string>
     <string name="dialog_choose_sync_service_title">Choose synchronization provider</string>
-    <string name="gpodnet_description">Gpodder.net is an open-source podcast synchronization service that you can install on your own server. Gpodder.net is independent of the AntennaPod project.</string>
-    <string name="synchronization_summary_nextcloud">Gpodder Sync is an open-source Nextcloud app that you can easily install on your own server. Gpodder Sync is independent of the AntennaPod project.</string>
+    <string name="gpodnet_description">Gpodder.net is an open-source podcast synchronization service that you can install on your own server. Gpodder.net is independent of Aftercast.</string>
+    <string name="synchronization_summary_nextcloud">Gpodder Sync is an open-source Nextcloud app that you can easily install on your own server. Gpodder Sync is independent of Aftercast.</string>
     <string name="synchronization_host_explanation">You can pick your own server to synchronize with. When you have identified your preferred synchronization server, please enter its address here.</string>
     <string name="synchronization_host_label">Server address</string>
     <string name="proceed_to_login_butLabel">Proceed to login</string>
@@ -819,8 +819,8 @@
     <string name="rating_tagline">Since %1$s, you played %2$s%3$d%4$s hours of podcasts.</string>
     <string name="rating_contribute_label">Want to join? Whether you want to translate, support, design or code, we would be happy to have you!</string>
     <string name="rating_contribute_button">Discover ways to contribute</string>
-    <string name="rating_volunteers_label">Aftercast is built from AntennaPod, which is developed by volunteers. A rating on Google Play supports that project.</string>
-    <string name="rating_rate">Rate AntennaPod</string>
+    <string name="rating_volunteers_label">A rating on Google Play supports Aftercast. Aftercast is a modified version of AntennaPod, which is a separate project.</string>
+    <string name="rating_rate">Rate Aftercast</string>
     <string name="rating_later">Later</string>
 
     <!-- Online feed view -->

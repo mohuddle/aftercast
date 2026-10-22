@@ -239,13 +239,8 @@ public class PlaybackServiceNotificationBuilder {
         intent.setAction("MediaCode" + keycodeValue);
         intent.putExtra(MediaButtonReceiver.EXTRA_KEYCODE, keycodeValue);
 
-        if (Build.VERSION.SDK_INT >= 26) {
-            return PendingIntent.getForegroundService(context, requestCode, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        } else {
-            return PendingIntent.getService(context, requestCode, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        }
+        return PendingIntent.getForegroundService(context, requestCode, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     private PendingIntent getPendingIntentForCustomMediaAction(String action, int requestCode) {
@@ -253,13 +248,8 @@ public class PlaybackServiceNotificationBuilder {
         intent.setAction("MediaAction" + action);
         intent.putExtra(MediaButtonReceiver.EXTRA_CUSTOM_ACTION, action);
 
-        if (Build.VERSION.SDK_INT >= 26) {
-            return PendingIntent.getForegroundService(context, requestCode, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        } else {
-            return PendingIntent.getService(context, requestCode, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        }
+        return PendingIntent.getForegroundService(context, requestCode, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     public void setMediaSessionToken(MediaSessionCompat.Token mediaSessionToken) {

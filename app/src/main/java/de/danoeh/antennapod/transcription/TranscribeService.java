@@ -472,11 +472,7 @@ public class TranscribeService extends android.app.Service {
     }
 
     private void detachAndStop(boolean remove) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            stopForeground(remove ? STOP_FOREGROUND_REMOVE : STOP_FOREGROUND_DETACH);
-        } else {
-            stopForeground(remove);
-        }
+        stopForeground(remove ? STOP_FOREGROUND_REMOVE : STOP_FOREGROUND_DETACH);
         stopSelf(startId);
     }
 
