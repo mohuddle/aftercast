@@ -105,7 +105,7 @@ Bug reports and pull requests belong in this repository. See [CONTRIBUTING.md](C
 
 - **Minimum Android version**: Android 8.0 (API 26). Phones from about the last five years are the intended fit for transcription.
 - **Target Android version**: Android 16 (API 36)
-- **Version**: 0.1.12 (versionCode 3120303)
+- **Version**: 0.1.13 (versionCode 3120304)
 - **Application id**: `app.aftercast`
 - **ABI**: arm64-v8a only
 - **Language**: Java

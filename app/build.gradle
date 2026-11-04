@@ -14,8 +14,8 @@ android {
         // 0.1.0 is the first sideload build, based on AntennaPod 3.12.2.
         // Stay above AntennaPod 3.12.2 (3120295) so preference migrations
         // that key off the version code do not run again.
-        versionCode 3120303
-        versionName "0.1.12"
+        versionCode 3120304
+        versionName "0.1.13"
 
         // sherpa-onnx is packaged for this phone only. Other ABIs would add tens of megabytes.
         ndk {
