@@ -1,4 +1,6 @@
 <?xml version ="1.0" encoding ="utf-8"?>
+<!-- Not registered in the manifest. These https fulfillments need intent filters
+     and assetlinks.json on mobitecture.dev before Assistant can open the app. -->
 <actions>
     <action intentName="actions.intent.OPEN_APP_FEATURE">
         <fulfillment urlTemplate="https://mobitecture.dev/deeplink/main{?page}">

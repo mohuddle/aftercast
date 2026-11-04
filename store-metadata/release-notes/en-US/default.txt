@@ -1,1 +1,1 @@
-Up Next covers now fill the card, and Settings no longer shows a package-name notice.
+Podcast subscribe and import links are unchanged. Aftercast no longer claims verified web links for pages it does not associate.
